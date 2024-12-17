@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
+import NavbarComponent from "@/components/global-components/Navbar";
+import Footer from "@/components/global-components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextUIProvider>{children}</NextUIProvider>
+        <NextUIProvider>
+          <NavbarComponent />
+          {children}
+          <Footer />
+        </NextUIProvider>
       </body>
     </html>
   );

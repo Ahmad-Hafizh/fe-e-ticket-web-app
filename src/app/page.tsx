@@ -1,12 +1,40 @@
-import Image from "next/image";
+import EventCard from "@/components/global-components/EventCard";
+import RoundedCard from "@/components/global-components/RoundedCard";
+import TopEvent from "./section/TopEvent";
 
 export default function Home() {
+  const fakedData = [
+    {
+      linkHref: "https://google.com",
+      imgSrc:
+        "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=3603&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "This is an example",
+    },
+    {
+      linkHref: "https://google.com",
+      imgSrc:
+        "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=3603&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "This is an example",
+    },
+    {
+      linkHref: "https://google.com",
+      imgSrc:
+        "https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=3603&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "This is an example",
+    },
+  ];
+
   return (
     <>
-      <div className="bg-slate-500 w-full h-full px-14 md:px-32 lg:px-48">
-        <h1 className="text-white w-full border border-red-200">
-          HELLO THIS IS OUR EVENT WEBSITE
-        </h1>
+      <div className="bg-gradient-to-tr from-[#FFB457] to-[#FF705B] w-full h-full px-14 md:px-32 lg:px-48 py-20">
+        {/**Component Slider Jumbotron */}
+        {/**Component Slider Event (Event pilihan) */}
+        {/**Component Slider Rounded (kategori) */}
+        <TopEvent /> {/**Component List Event (Top event) */}
+        {/**Component Slider Event (Event by city) */}
+        {/**Component Banner */}
+        {/**Component Slider Rounded (creator) */}
+        {/**Component Slider Event (Event by top rated) */}
       </div>
     </>
   );
