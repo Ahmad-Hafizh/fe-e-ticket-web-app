@@ -1,25 +1,31 @@
-'use client';
-import Autoplay from 'embla-carousel-autoplay';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useRef } from 'react';
-import Image from 'next/image';
+"use client";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useRef } from "react";
+import Image from "next/image";
 
 const Jumbotron = () => {
   const images = [
     {
-      url: '/xample.jpg',
+      url: "/xample.jpg",
     },
     {
-      url: '/xample.jpg',
+      url: "/xample.jpg",
     },
     {
-      url: '/xample.jpg',
+      url: "/xample.jpg",
     },
     {
-      url: '/xample.jpg',
+      url: "/xample.jpg",
     },
     {
-      url: '/xample.jpg',
+      url: "/xample.jpg",
     },
   ];
   //Carousel Jumbotron
@@ -27,13 +33,23 @@ const Jumbotron = () => {
 
   return (
     <div className="w-full ">
-      <Carousel plugins={[plugin.current]} className="w-full relative" onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
+      <Carousel
+        plugins={[plugin.current]}
+        className="w-full relative"
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.reset}
+      >
         <CarouselContent>
           {images.map((e, index) => (
-            <CarouselItem key={index} className="basis-full">
+            <CarouselItem key={index} className="basis-full ">
               <div className="rounded-xl overflow-hidden">
                 <div className="relative w-full h-96 overflow-hidden">
-                  <Image src={e.url} alt="jumbotron img" fill className="absolute" />
+                  <Image
+                    src={e.url}
+                    alt="jumbotron img"
+                    fill
+                    className="absolute"
+                  />
                 </div>
               </div>
             </CarouselItem>
