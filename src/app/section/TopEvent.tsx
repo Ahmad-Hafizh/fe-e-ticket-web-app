@@ -1,7 +1,7 @@
-import Image from "next/image";
-interface ITopEvent {
-  imgbanner: string;
-}
+import Image from 'next/image';
+// interface ITopEvent {
+//   imgbanner: string;
+// }
 
 const TopEvent = () => {
   return (

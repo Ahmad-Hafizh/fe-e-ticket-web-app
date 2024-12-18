@@ -1,10 +1,8 @@
 'use client';
-import Autoplay from 'embla-carousel-autoplay';
+import EventCard from '@/components/global-components/EventCard';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useRef } from 'react';
-import Image from 'next/image';
 
-const Jumbotron = () => {
+const EventCarousel = () => {
   const images = [
     {
       url: '/xample.jpg',
@@ -22,20 +20,14 @@ const Jumbotron = () => {
       url: '/xample.jpg',
     },
   ];
-  //Carousel Jumbotron
-  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
 
   return (
     <div className="w-full ">
-      <Carousel plugins={[plugin.current]} className="w-full relative" onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
+      <Carousel className="w-full relative">
         <CarouselContent>
           {images.map((e, index) => (
-            <CarouselItem key={index} className="basis-full">
-              <div className="rounded-xl overflow-hidden">
-                <div className="relative w-full h-96 overflow-hidden">
-                  <Image src={e.url} alt="jumbotron img" fill className="absolute" />
-                </div>
-              </div>
+            <CarouselItem key={index} className="basis-1/4">
+              <EventCard eventImg={e.url} eventOrganizerName="Organizer" eventPrice="Rp.10.000" eventOrganizerProfile={e.url} eventStartDate="18-12-2024" eventTitle="judul" />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -49,4 +41,4 @@ const Jumbotron = () => {
   //Carousel Event Pilihan (Picked for you)
   //Carousel Category
 };
-export default Jumbotron;
+export default EventCarousel;
