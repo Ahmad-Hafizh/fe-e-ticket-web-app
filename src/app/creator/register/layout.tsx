@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-interface IRegisterCreatorLayoutProps {
+interface ICreatorRegisProps {
   children: React.ReactNode;
 }
 
-const RegisterCreatorLayout: React.FunctionComponent<IRegisterCreatorLayoutProps> = ({ children }) => {
+const CreatorRegis: React.FunctionComponent<ICreatorRegisProps> = ({ children }) => {
   return <>{children}</>;
 };
 
-export default RegisterCreatorLayout;
+export default CreatorRegis;

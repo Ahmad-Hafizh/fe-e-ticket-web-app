@@ -1,14 +1,9 @@
-"use client";
-import EventCard from "@/components/global-components/EventCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { basicGetApi } from "../config/axios";
-import { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+import EventCard from '@/components/global-components/EventCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { basicGetApi } from '../config/axios';
+import { useEffect, useState } from 'react';
 
 interface IEventCollection {
   apicall: string;
@@ -69,10 +64,7 @@ const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
         <Carousel className="w-full relative">
           <CarouselContent>
             {/* {eventData.map((value: any, index: number) => ( */}
-            <CarouselItem
-              key={1}
-              className="basis-2/3 md:basis-1/3 lg:basis-1/4"
-            >
+            <CarouselItem key={1} className="basis-2/3 md:basis-1/3 lg:basis-1/4">
               <EventCard
                 eventImg={eventData.imgEvent}
                 eventOrganizerName={eventData.organizerName}
