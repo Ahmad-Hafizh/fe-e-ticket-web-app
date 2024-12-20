@@ -1,9 +1,12 @@
 import Image from "next/image";
 
+
 const TopEvent = () => {
   return (
     <div className=" flex flex-col gap-7 w-full">
+
       <div className="text-2xl font-bold text-center md:text-left md:px-4 md:pb-4 lg:pb-6 text-white">
+
         Top Events!
       </div>
       <div className="flex flex-col lg:flex-row lg:justify-between gap-8 lg:gap-20 w-full  overflow-auto lg:px-0">

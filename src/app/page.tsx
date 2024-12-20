@@ -9,6 +9,7 @@ import { Carousel } from "@/components/ui/carousel";
 import CarouselRounded from "@/components/global-components/CarouselRounded";
 import Category from "./section/Category";
 
+
 export default function Home() {
   const fakedData = [
     {
@@ -62,6 +63,7 @@ export default function Home() {
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
         <Category label="Category" apicall="/event?city=Surabaya" />
       </div>
+
       {/**Component List Event (Top event) */}
       {/**Component Slider Event (Event by city) */}
       {/**Component Banner */}

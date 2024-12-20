@@ -24,6 +24,7 @@ const EventCard: React.FC<ICardEvent> = ({
       className="flex flex-col relative z-[9999] justify-between border-none shadow-lg rounded-lg bg-white w-full h-full hover:bg-gray-100 cursor-pointer"
       onClick={() => onClick()}
     >
+
       <img
         src={eventImg}
         className="rounded-tr-lg rounded-tl-lg h-36 md:h-40 lg:h-56"

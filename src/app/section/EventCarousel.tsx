@@ -11,7 +11,9 @@ import {
 import { basicGetApi } from "../config/axios";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { useRouter } from "next/navigation";
+
 
 interface IEventCollection {
   apicall: string;
@@ -141,18 +143,22 @@ const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
                     eventOrganizerProfile={value.organizerProfile}
                     eventStartDate={value.startDate}
                     eventTitle={value.title}
+
                     onClick={() => {
                       route.push(`/event/${value.event_id}`);
                     }}
+
                   />{" "}
                   {/**Perlu include di backend */}
                 </CarouselItem>
               );
             })}
           </CarouselContent>
+
           {/* <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity"> */}
           <CarouselPrevious className="left-3" />
           <CarouselNext className="right-3 md:right-9" /> {/* </div> */}
+
         </Carousel>
       </div>
     </div>
