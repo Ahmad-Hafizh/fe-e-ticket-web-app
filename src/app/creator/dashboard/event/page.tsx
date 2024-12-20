@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CircleFadingPlus } from 'lucide-react';
+import Link from 'next/link';
 
 const Event = () => {
   return (
@@ -29,10 +30,10 @@ const Event = () => {
             <TabsTrigger value="unactive">Unactive</TabsTrigger>
           </TabsList>
           <div className="w-full bg-[#f5f5f5] min-h-[65vh] rounded-xl p-4 grid grid-cols-4 gap-10">
-            <div className="w-full bg-white rounded-lg h-80 shadow-md flex flex-col justify-center items-center gap-4">
+            <Link href="/creator/dashboard/event/new-event" className="w-full bg-white rounded-lg h-80 shadow-md flex flex-col justify-center items-center gap-4 cursor-pointer">
               <CircleFadingPlus className="w-20 h-20" />
               <p className="text-xl">New Event</p>
-            </div>
+            </Link>
             <TabsContent value="all">All events list</TabsContent>
             <TabsContent value="active">Active events list</TabsContent>
             <TabsContent value="draft">Draft events list</TabsContent>
