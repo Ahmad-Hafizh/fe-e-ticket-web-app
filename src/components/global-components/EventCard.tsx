@@ -7,6 +7,7 @@ interface ICardEvent {
   eventOrganizerName: string;
   eventOrganizerProfile: string;
   eventPrice: string;
+  onClick: () => void;
 }
 
 const EventCard: React.FC<ICardEvent> = ({
@@ -16,9 +17,14 @@ const EventCard: React.FC<ICardEvent> = ({
   eventPrice,
   eventOrganizerName,
   eventOrganizerProfile,
+  onClick,
 }) => {
   return (
-    <div className="flex flex-col justify-between border-none shadow-lg rounded-lg bg-white w-full h-full">
+    <div
+      className="flex flex-col relative z-[9999] justify-between border-none shadow-lg rounded-lg bg-white w-full h-full hover:bg-gray-100 cursor-pointer"
+      onClick={() => onClick()}
+    >
+
       <img
         src={eventImg}
         className="rounded-tr-lg rounded-tl-lg h-36 md:h-40 lg:h-56"

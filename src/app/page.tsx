@@ -5,6 +5,10 @@ import Jumbotron from "./section/Jumbotron";
 import EventCarousel from "./section/EventCarousel";
 import NavbarComponent from "@/components/global-components/Navbar";
 import Footer from "@/components/global-components/Footer";
+import { Carousel } from "@/components/ui/carousel";
+import CarouselRounded from "@/components/global-components/CarouselRounded";
+import Category from "./section/Category";
+
 
 export default function Home() {
   const fakedData = [
@@ -49,10 +53,17 @@ export default function Home() {
       </div>
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
         <EventCarousel
-          label="Event Picked for You"
-          apicall="/event?cat=Music"
+          label="Event in your location"
+          apicall="/event?city=Surabaya"
         />
       </div>
+      <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
+        <CarouselRounded label="Creator" apicall="/event?city=Surabaya" />
+      </div>
+      <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
+        <Category label="Category" apicall="/event?city=Surabaya" />
+      </div>
+
       {/**Component List Event (Top event) */}
       {/**Component Slider Event (Event by city) */}
       {/**Component Banner */}
