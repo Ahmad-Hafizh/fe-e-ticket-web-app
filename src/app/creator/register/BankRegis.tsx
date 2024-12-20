@@ -88,6 +88,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
             />
           </div>
           <div className="flex gap-6 !mt-0">
+
             <Button
               type="button"
               className="w-full rounded-full !mt-0 border bg-white text-black hover:text-white"

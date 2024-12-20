@@ -12,6 +12,7 @@ const CreatorRegisterPage = () => {
   const onSubmitAllData = () => {
     console.log({ ...organization, ...bank });
   };
+
   return (
     <div className="h-screen w-screen bg-gray-100 grid grid-cols-2 p-10">
       <div></div>
