@@ -76,7 +76,7 @@ export default function Navbar() {
                   <Select
                     className="w-full h-full z-10"
                     items={city}
-                    defaultSelectedKeys={"Surabaya"}
+                    aria-label="City"
                   >
                     {(city) => (
                       <SelectItem key={city.key} className="w-full">
