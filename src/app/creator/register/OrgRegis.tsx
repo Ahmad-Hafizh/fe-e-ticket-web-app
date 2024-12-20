@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { z } from 'zod';
 import React from 'react';
@@ -16,17 +17,19 @@ const formSchema = z.object({
 
 interface IOrganizationRegis {
   onNext: () => void;
+  setData: (data: any) => void;
+  currentData: any;
 }
 
-export default function OrganizationRegis({ onNext }: IOrganizationRegis) {
+export default function OrganizationRegis({ onNext, setData, currentData }: IOrganizationRegis) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      organization_name: '',
-      organization_email: '',
-      organization_phone: '',
-      organization_address: '',
+      organization_name: currentData.organization_name || '',
+      organization_email: currentData.organization_email || '',
+      organization_phone: currentData.organization_phone || '',
+      organization_address: currentData.organization_address || '',
     },
   });
 
@@ -34,7 +37,7 @@ export default function OrganizationRegis({ onNext }: IOrganizationRegis) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    setData(values);
     onNext();
   }
 
