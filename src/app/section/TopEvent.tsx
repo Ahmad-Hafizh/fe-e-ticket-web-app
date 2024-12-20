@@ -1,17 +1,16 @@
 import Image from "next/image";
-// interface ITopEvent {
-//   imgbanner: string;
-// }
 
 const TopEvent = () => {
   return (
     <div className=" flex flex-col gap-7 w-full">
-      <div className="text-2xl font-bold text-center md:text-left md:px-4 md:pb-4 lg:pb-6">
+      <div className="text-2xl font-bold text-center md:text-left md:px-4 md:pb-4 lg:pb-6 text-white">
         Top Events!
       </div>
       <div className="flex flex-col lg:flex-row lg:justify-between gap-8 lg:gap-20 w-full  overflow-auto lg:px-0">
         <div className="flex gap-4 items-center justify-center lg:items-start">
-          <h1 className="text-6xl md:text-8xl lg:text-7xl font-black">1</h1>
+          <h1 className="text-6xl md:text-8xl lg:text-7xl font-black text-white">
+            1
+          </h1>
           <Image
             height={30}
             width={70}
@@ -21,7 +20,9 @@ const TopEvent = () => {
           />
         </div>
         <div className="flex gap-4 items-center justify-center lg:items-start">
-          <h1 className="text-6xl md:text-8xl lg:text-7xl font-black">2</h1>
+          <h1 className="text-6xl md:text-8xl lg:text-7xl font-black text-white">
+            2
+          </h1>
           <Image
             height={30}
             width={70}
@@ -31,7 +32,9 @@ const TopEvent = () => {
           />
         </div>
         <div className="flex gap-4 items-center justify-center lg:items-start">
-          <h1 className="text-6xl md:text-8xl lg:text-7xl font-black">3</h1>
+          <h1 className="text-6xl md:text-8xl lg:text-7xl font-black text-white">
+            3
+          </h1>
           <Image
             height={30}
             width={70}

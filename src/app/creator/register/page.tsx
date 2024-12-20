@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useState } from 'react';
 import OrganizationRegis from './OrgRegis';
@@ -5,7 +6,12 @@ import BankRegis from './BankRegis';
 
 const CreatorRegisterPage = () => {
   const [page, setPage] = useState(0);
-  console.log(page);
+  const [organization, setOrganization] = useState({});
+  const [bank, setBank] = useState({});
+
+  const onSubmitAllData = () => {
+    console.log({ ...organization, ...bank });
+  };
 
   return (
     <div className="h-screen w-screen bg-gray-100 grid grid-cols-2 p-10">
@@ -23,6 +29,10 @@ const CreatorRegisterPage = () => {
             onNext={() => {
               setPage(1);
             }}
+            setData={(data: any) => {
+              setOrganization(data);
+            }}
+            currentData={organization}
           />
         </div>
       ) : (
@@ -38,6 +48,11 @@ const CreatorRegisterPage = () => {
             onNext={() => {
               setPage(0);
             }}
+            setData={(data: any) => {
+              setBank(data);
+            }}
+            currentData={bank}
+            onSubmitAllData={onSubmitAllData}
           />
         </div>
       )}

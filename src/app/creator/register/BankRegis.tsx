@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { z } from 'zod';
 import React from 'react';
@@ -6,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   bank_name: z.string().min(4, { message: 'Must be more than 4 or more characters long' }).max(50, { message: 'Must be less than 50 characters long' }),
@@ -15,16 +17,20 @@ const formSchema = z.object({
 
 interface IBankRegis {
   onNext: () => void;
+  setData: (data: any) => void;
+  currentData: any;
+  onSubmitAllData: () => void;
 }
 
-export default function BankRegis({ onNext }: IBankRegis) {
+export default function BankRegis({ onNext, setData, currentData, onSubmitAllData }: IBankRegis) {
+  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bank_name: '',
-      bank_account_name: '',
-      bank_account_number: '',
+      bank_name: currentData.bank_name || '',
+      bank_account_name: currentData.bank_account_name || '',
+      bank_account_number: currentData.bank_account_number || '',
     },
   });
 
@@ -32,7 +38,8 @@ export default function BankRegis({ onNext }: IBankRegis) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    setData(values);
+    onSubmitAllData();
   }
 
   return (
@@ -81,10 +88,18 @@ export default function BankRegis({ onNext }: IBankRegis) {
             />
           </div>
           <div className="flex gap-6 !mt-0">
-            <Button type="button" className="w-full rounded-full !mt-0 border bg-white text-black hover:text-white" onClick={onNext}>
+
+            <Button
+              type="button"
+              className="w-full rounded-full !mt-0 border bg-white text-black hover:text-white"
+              onClick={() => {
+                onNext();
+                setData(form.getValues());
+              }}
+            >
               Previous
             </Button>
-            <Button type="submit" className="w-full rounded-full !mt-0">
+            <Button type="submit" className="w-full rounded-full !mt-0" onClick={() => router.push('/creator/dashboard')}>
               Submit
             </Button>
           </div>

@@ -8,17 +8,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { basicGetApi } from "../config/axios";
+import { basicGetApi } from "../../app/config/axios";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
+import RoundedCard from "./RoundedCard";
 
 interface IEventCollection {
   apicall: string;
   label: string;
 }
 
-const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
+const CarouselRounded: React.FC<IEventCollection> = ({ apicall, label }) => {
   const [eventData, setEventData] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any | null>(null);
@@ -38,8 +38,6 @@ const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
   useEffect(() => {
     getData();
   }, []);
-
-  const route = useRouter();
 
   if (loading) {
     return (
@@ -132,30 +130,21 @@ const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
               return (
                 <CarouselItem
                   key={index}
-                  className="basis-2/3 md:basis-1/2 lg:basis-1/4 py-4"
+                  className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4"
                 >
-                  <EventCard
-                    eventImg={value.imgEvent}
-                    eventOrganizerName={value.organizerName}
-                    eventPrice={value.eventPrice}
-                    eventOrganizerProfile={value.organizerProfile}
-                    eventStartDate={value.startDate}
-                    eventTitle={value.title}
-                    onClick={() => {
-                      route.push(`/event/${value.event_id}`);
-                    }}
-                  />{" "}
+                  <RoundedCard title={value.title} pict={value.imgEvent} />
                   {/**Perlu include di backend */}
                 </CarouselItem>
               );
             })}
           </CarouselContent>
-          {/* <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity"> */}
-          <CarouselPrevious className="left-3" />
-          <CarouselNext className="right-3 md:right-9" /> {/* </div> */}
+          <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity">
+            <CarouselPrevious className="left-3" />
+            <CarouselNext className="right-3 md:right-9" /> 
+          </div>
         </Carousel>
       </div>
     </div>
   );
 };
-export default EventCarousel;
+export default CarouselRounded;

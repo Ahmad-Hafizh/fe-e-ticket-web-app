@@ -18,13 +18,13 @@ const dashboardItems = [
 ];
 const accountItems = [
   {
-    title: 'General Information',
-    url: '/creator/dashboard/general-information',
+    title: 'Profile',
+    url: '/creator/dashboard/profile',
     icon: UserRoundPen,
   },
   {
-    title: 'Bank Account',
-    url: '#',
+    title: 'Payment',
+    url: '/creator/dashboard/payment',
     icon: CreditCard,
   },
   {
