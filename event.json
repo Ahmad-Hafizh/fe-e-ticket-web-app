@@ -1,0 +1,37 @@
+{
+  "eventTitle": "Food Festival 2024",
+  "eventDescription": "Lorem Ipsum Dolor Reading Book",
+  "eventTimeDate": {
+    "startDate": "2024-12-10",
+    "endDate": "2024-12-20",
+    "startTime": "11:00",
+    "endTime": "21:00",
+    "timezone": "UTC+7"
+  },
+  "eventCategory": ["Music", "Festival"],
+  "eventLocation": {
+    "addressName": "Food Court",
+    "address": "Jalan Gubeng Utara",
+    "city": "Bandung",
+    "country": "Indonesia",
+    "zipcode": "29101"
+  },
+  "ticketTypes": [
+    {
+      "types": "Regular",
+      "price": 100,
+      "quantityAvailable": 1000
+    },
+    {
+      "types": "VIP",
+      "price": 200,
+      "quantityAvailable": 500
+    },
+    {
+      "types": "VVIP",
+      "price": 1000,
+      "quantityAvailable": 100
+    }
+  ],
+  "eventImg": "https://images.unsplash.com/photo-1511300636408-a63a89df3482?q=80&w=3570&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+}

@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import EventCard from '@/components/global-components/EventCard';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { basicGetApi } from '../config/axios';
-import { useEffect, useState } from 'react';
+"use client";
+import EventCard from "@/components/global-components/EventCard";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { basicGetApi } from "../config/axios";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface IEventCollection {
   apicall: string;
@@ -32,53 +39,114 @@ const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
   }, []);
 
   if (loading) {
-    return <div>Loading</div>;
+    return (
+      <div className="flex flex-col">
+        <h1 className="text-2xl font-bold pb-5">{label}</h1>
+        <div className="w-full ">
+          <Carousel className="w-full relative">
+            <CarouselContent>
+              <CarouselItem className="basis-2/3 md:basis-1/3 lg:basis-1/4 py-5">
+                <div className="flex flex-col justify-between border-none shadow-lg rounded-lg bg-white w-full">
+                  <Skeleton className="rounded-tr-lg rounded-tl-lg h-48" />
+                  <div className="py-3 px-5 md:py-4 flex-col flex gap-2">
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                    <Skeleton className="w-full h-5 rounded-lg" />
+                  </div>
+                  <hr></hr>
+                  <div className="flex gap-3 items-center py-3 px-5 ">
+                    <Skeleton className="rounded-full w-7 h-7 lg:w-9 lg:h-9" />
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                  </div>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="basis-2/3 md:basis-1/3 lg:basis-1/4 py-5">
+                <div className="flex flex-col justify-between border-none shadow-lg rounded-lg bg-white w-full">
+                  <Skeleton className="rounded-tr-lg rounded-tl-lg h-48" />
+                  <div className="py-3 px-5 md:py-4 flex-col flex gap-2">
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                    <Skeleton className="w-full h-5 rounded-lg" />
+                  </div>
+                  <hr></hr>
+                  <div className="flex gap-3 items-center py-3 px-5 ">
+                    <Skeleton className="rounded-full w-7 h-7 lg:w-9 lg:h-9" />
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                  </div>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="basis-2/3 md:basis-1/3 lg:basis-1/4 py-5">
+                <div className="flex flex-col justify-between border-none shadow-lg rounded-lg bg-white w-full">
+                  <Skeleton className="rounded-tr-lg rounded-tl-lg h-48" />
+                  <div className="py-3 px-5 md:py-4 flex-col flex gap-2">
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                    <Skeleton className="w-full h-5 rounded-lg" />
+                  </div>
+                  <hr></hr>
+                  <div className="flex gap-3 items-center py-3 px-5 ">
+                    <Skeleton className="rounded-full w-7 h-7 lg:w-9 lg:h-9" />
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                  </div>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="basis-2/3 md:basis-1/3 lg:basis-1/4 py-5">
+                <div className="flex flex-col justify-between border-none shadow-lg rounded-lg bg-white w-full">
+                  <Skeleton className="rounded-tr-lg rounded-tl-lg h-48" />
+                  <div className="py-3 px-5 md:py-4 flex-col flex gap-2">
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                    <Skeleton className="w-full h-5 rounded-lg" />
+                  </div>
+                  <hr></hr>
+                  <div className="flex gap-3 items-center py-3 px-5 ">
+                    <Skeleton className="rounded-full w-7 h-7 lg:w-9 lg:h-9" />
+                    <Skeleton className="w-full h-10 rounded-lg" />
+                  </div>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+            <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity">
+              <CarouselPrevious className="left-3" />
+              <CarouselNext className="right-3 md:right-9" /> 
+            </div>
+          </Carousel>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return <div>Error {error}</div>;
   }
 
-  // const images = [
-  //   {
-  //     url: "/xample.jpg",
-  //   },
-  //   {
-  //     url: "/xample.jpg",
-  //   },
-  //   {
-  //     url: "/xample.jpg",
-  //   },
-  //   {
-  //     url: "/xample.jpg",
-  //   },
-  //   {
-  //     url: "/xample.jpg",
-  //   },
-  // ];
-
   return (
-    <div className="flex flex-col">
-      <h1>{label}</h1>
+    <div className="flex flex-col py-0">
+      <h1 className="text-2xl font-bold pb-5 pt-0">{label}</h1>
       <div className="w-full ">
         <Carousel className="w-full relative">
           <CarouselContent>
-            {/* {eventData.map((value: any, index: number) => ( */}
-            <CarouselItem key={1} className="basis-2/3 md:basis-1/3 lg:basis-1/4">
-              <EventCard
-                eventImg={eventData.imgEvent}
-                eventOrganizerName={eventData.organizerName}
-                eventPrice={eventData.eventPrice}
-                eventOrganizerProfile={eventData.organizerProfile}
-                eventStartDate={eventData.startDate}
-                eventTitle={eventData.title}
-              />
-            </CarouselItem>
-            {/* ))} */}
+            {eventData.map((value: any, index: number) => {
+              {
+                console.log("ini value", value);
+              }
+              return (
+                <CarouselItem
+                  key={index}
+                  className="basis-2/3 md:basis-1/2 lg:basis-1/4 py-4"
+                >
+                  <EventCard
+                    eventImg={value.imgEvent}
+                    eventOrganizerName={value.organizerName}
+                    eventPrice={value.eventPrice}
+                    eventOrganizerProfile={value.organizerProfile}
+                    eventStartDate={value.startDate}
+                    eventTitle={value.title}
+                  />{" "}
+                  {/**Perlu include di backend */}
+                </CarouselItem>
+              );
+            })}
           </CarouselContent>
           <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity">
             <CarouselPrevious className="left-3" />
-            <CarouselNext className="right-3 md:right-9" />
+            <CarouselNext className="right-3 md:right-9" /> 
           </div>
         </Carousel>
       </div>
