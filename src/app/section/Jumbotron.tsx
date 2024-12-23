@@ -1,16 +1,11 @@
-"use client";
-import Autoplay from "embla-carousel-autoplay";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
-import { basicGetApi } from "../config/axios";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+import Autoplay from 'embla-carousel-autoplay';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useRef, useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
+import { basicGetApi } from '../config/axios';
 
 interface IJumbotron {
   apicall: string;
@@ -25,7 +20,7 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
     try {
       setLoading(true);
       const response = await basicGetApi.get(`${apicall}`);
-      console.log(response);
+      console.log(response.data);
       setEventData(response.data.result);
       setLoading(false);
     } catch (error) {
@@ -40,16 +35,15 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
   //Carousel Jumbotron
   const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
 
-  if (loading) {
-    return (
-      <div className="w-full">
-        <Carousel
-          plugins={[plugin.current]}
-          className="w-full relative"
-          onMouseEnter={plugin.current.stop}
-          onMouseLeave={plugin.current.reset}
-        >
-          <CarouselContent>
+  if (error) {
+    return <div>Error {error}</div>;
+  }
+
+  return (
+    <div className="w-full">
+      <Carousel plugins={[plugin.current]} className="w-full relative group" onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
+        <CarouselContent>
+          {loading ? (
             <CarouselItem className="basis-full">
               <div className="rounded-xl overflow-hidden">
                 <div className="relative w-full h-96 overflow-hidden">
@@ -57,48 +51,20 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
                 </div>
               </div>
             </CarouselItem>
-          </CarouselContent>
-          <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity">
-            <CarouselPrevious className="left-3" />
-            <CarouselNext className="right-3" />
-          </div>
-        </Carousel>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div>Error {error}</div>;
-  }
-
-  return (
-    <div className="w-full">
-      <Carousel
-        plugins={[plugin.current]}
-        className="w-full relative"
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
-      >
-        <CarouselContent>
-          {eventData.map((value: any, index: number) => (
-            <CarouselItem key={index} className="basis-full">
-              <div className="rounded-xl overflow-hidden">
-                <div className="relative w-full h-96 overflow-hidden">
-                  <Image
-                    src={value.imgEvent}
-                    alt="jumbotron img"
-                    fill
-                    className="absolute object-cover rounded-lg"
-                  />
+          ) : (
+            eventData.map((value: any, index: number) => (
+              <CarouselItem key={index} className="basis-full">
+                <div className="rounded-xl overflow-hidden">
+                  <div className="relative w-full h-96 overflow-hidden">
+                    <Image src={value.imgEvent} alt="jumbotron img" fill className="absolute object-cover rounded-lg" />
+                  </div>
                 </div>
-              </div>
-            </CarouselItem>
-          ))}
+              </CarouselItem>
+            ))
+          )}
         </CarouselContent>
-        <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity">
-          <CarouselPrevious className="left-3" />
-          <CarouselNext className="right-3" />
-        </div>
+        <CarouselPrevious className="left-3 hidden group-hover:flex" />
+        <CarouselNext className="right-3 hidden group-hover:flex" />
       </Carousel>
     </div>
   );

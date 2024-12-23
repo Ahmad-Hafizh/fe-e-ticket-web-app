@@ -5,8 +5,8 @@ import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/global-components/CustomInput';
 import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
@@ -52,9 +52,8 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               name="bank_name"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1">Bank Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bank Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Enter Bank Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0 " />
                 </FormItem>
@@ -65,9 +64,8 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               name="bank_account_name"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1">Bank Account Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bank Account Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Bank Account Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Account Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -78,9 +76,8 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               name="bank_account_number"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1">Bank Account Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bank Account Number" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Bank Account Number" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Account Number" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -88,7 +85,6 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
             />
           </div>
           <div className="flex gap-6 !mt-0">
-
             <Button
               type="button"
               className="w-full rounded-full !mt-0 border bg-white text-black hover:text-white"
