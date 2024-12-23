@@ -5,8 +5,8 @@ import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/global-components/CustomInput';
 
 const formSchema = z.object({
   organization_name: z.string().min(4, { message: 'Must be more than 4 or more characters long' }).max(50, { message: 'Must be less than 50 characters long' }),
@@ -51,9 +51,8 @@ export default function OrganizationRegis({ onNext, setData, currentData }: IOrg
               name="organization_name"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1">Organization Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Organization Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Organization Name" {...field} title="Organization Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0 " />
                 </FormItem>
@@ -64,9 +63,8 @@ export default function OrganizationRegis({ onNext, setData, currentData }: IOrg
               name="organization_email"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1">Organization Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Organization Email" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Organization Email" {...field} title="Organization Email" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -77,9 +75,8 @@ export default function OrganizationRegis({ onNext, setData, currentData }: IOrg
               name="organization_phone"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1">Organization Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="Organization Phone" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Organization Phone" {...field} title="Organization Phone" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -90,9 +87,8 @@ export default function OrganizationRegis({ onNext, setData, currentData }: IOrg
               name="organization_address"
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
-                  <FormLabel className="text-xs ml-7 absolute top-1 ">Organization Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Organization Address" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" />
+                    <Input placeholder="Organization Address" {...field} title="Organization Address" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
