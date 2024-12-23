@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React from 'react';
 // import { Input } from '@/components/ui/input';
@@ -7,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/global-components/CustomInput';
+import { basicGetApi } from '../config/axios';
 
 const formSchema = z.object({
   name: z.string().min(4, { message: 'Must be more than 4 or more characters long' }).max(100, { message: 'Must be less than 100 characters long' }),
@@ -19,9 +21,10 @@ interface IRegister {
   onNext: () => void;
   onSetData: (values: any) => void;
   currentData: any;
+  onSetUserData: (user: any) => void;
 }
 
-const Register = ({ onNext, onSetData, currentData }: IRegister) => {
+const Register = ({ onNext, onSetData, currentData, onSetUserData }: IRegister) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,7 +35,7 @@ const Register = ({ onNext, onSetData, currentData }: IRegister) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (values.password != values.confirmPassword) {
       form.setError('confirmPassword', {
         type: 'manual',
@@ -40,7 +43,20 @@ const Register = ({ onNext, onSetData, currentData }: IRegister) => {
       });
     } else {
       onSetData(values);
-      onNext();
+      try {
+        const response = await basicGetApi.post('/users/signup', {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        });
+
+        console.log(response.data.result);
+        onSetUserData(response.data.result);
+        alert('account added');
+        onNext();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

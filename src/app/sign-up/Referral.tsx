@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -5,6 +6,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/global-components/CustomInput';
 import { Button } from '@/components/ui/button';
+import { basicGetApi } from '../config/axios';
 
 const formSchema = z.object({
   referralCode: z.string().max(8, { message: 'Referral code must be less than 8 characters' }).optional(),
@@ -14,9 +16,11 @@ interface IReferral {
   onNext: () => void;
   onSetData: (values: any) => void;
   currentData: any;
+  userData: any;
+  onResetData: () => void;
 }
 
-const Referral = ({ onNext, onSetData, currentData }: IReferral) => {
+const Referral = ({ onNext, onSetData, currentData, onResetData, userData }: IReferral) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -24,8 +28,20 @@ const Referral = ({ onNext, onSetData, currentData }: IReferral) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    onSetData(values.referralCode);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await basicGetApi.patch('/users/add-referral', {
+        user_id: userData.user_id,
+        email: userData.email,
+        referral_code: values.referralCode,
+      });
+      console.log(response.data.result);
+      onResetData();
+      alert('referral added');
+    } catch (error) {
+      console.log(error);
+      onSetData(values.referralCode);
+    }
   };
 
   return (

@@ -20,7 +20,7 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
     try {
       setLoading(true);
       const response = await basicGetApi.get(`${apicall}`);
-      console.log(response);
+      console.log(response.data);
       setEventData(response.data.result);
       setLoading(false);
     } catch (error) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
@@ -6,6 +7,7 @@ import Referral from './Referral';
 
 const SignUpPage = () => {
   const [data, setData] = useState<any>({});
+  const [userData, setUserData] = useState<any>({});
   const [page, setPage] = useState('register');
 
   return (
@@ -16,6 +18,9 @@ const SignUpPage = () => {
           onSetData={(values: any) => {
             setData({ ...data, ...values });
           }}
+          onSetUserData={(user: any) => {
+            setUserData(user);
+          }}
           currentData={data}
         />
       ) : (
@@ -24,6 +29,10 @@ const SignUpPage = () => {
           onSetData={(values: any) => {
             setData({ ...data, referralCode: values });
           }}
+          onResetData={() => {
+            setData({});
+          }}
+          userData={userData}
           currentData={data}
         />
       )}
