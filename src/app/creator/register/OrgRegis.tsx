@@ -26,10 +26,10 @@ export default function OrganizationRegis({ onNext, setData, currentData }: IOrg
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      organization_name: currentData.organization_name || '',
-      organization_email: currentData.organization_email || '',
-      organization_phone: currentData.organization_phone || '',
-      organization_address: currentData.organization_address || '',
+      organization_name: currentData?.organization_name || '',
+      organization_email: currentData?.organization_email || '',
+      organization_phone: currentData?.organization_phone || '',
+      organization_address: currentData?.organization_address || '',
     },
   });
 

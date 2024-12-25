@@ -5,7 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { basicGetApi } from '../config/axios';
+import { basicGetApi } from '../../../app/config/axios';
 
 interface IJumbotron {
   apicall: string;
@@ -20,7 +20,6 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
     try {
       setLoading(true);
       const response = await basicGetApi.get(`${apicall}`);
-      console.log(response.data);
       setEventData(response.data.result);
       setLoading(false);
     } catch (error) {

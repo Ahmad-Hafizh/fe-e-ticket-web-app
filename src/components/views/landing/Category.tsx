@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import EventCard from "@/components/global-components/EventCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { basicGetApi } from "../../app/config/axios";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import RoundedCard from "../../components/global-components/RoundedCard";
-import SquareRoundedCard from "@/components/global-components/squareRoundedCard";
-import { GiMusicalNotes } from "react-icons/gi";
+'use client';
+// import EventCard from "@/components/global-components/EventCard";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { basicGetApi } from '../../../app/config/axios';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+// import RoundedCard from "../../components/global-components/RoundedCard";
+import SquareRoundedCard from '@/components/global-components/squareRoundedCard';
+// import { GiMusicalNotes } from "react-icons/gi";
 
 interface IEventCollection {
   apicall: string;
@@ -29,7 +23,6 @@ const Category: React.FC<IEventCollection> = ({ apicall, label }) => {
     try {
       setLoading(true);
       const response = await basicGetApi.get(`${apicall}`);
-      console.log(response);
       setEventData(response.data.result);
       setLoading(false);
     } catch (error) {
@@ -122,25 +115,14 @@ const Category: React.FC<IEventCollection> = ({ apicall, label }) => {
   return (
     <div className="flex flex-col py-10 px-2 w-full h-full bg-gray-100 rounded-xl shadow-lg">
       <h1 className="text-2xl font-bold pt-0 px-14">{label}</h1>
-      <h1 className="text-md font-medium pb-2 pt-0 px-14">
-        Search your favorite event theme
-      </h1>
+      <h1 className="text-md font-medium pb-2 pt-0 px-14">Search your favorite event theme</h1>
       <div className="w-full ">
         <Carousel className="w-full relative">
           <CarouselContent>
             {eventData.map((value: any, index: number) => {
-              {
-                console.log("ini value", value);
-              }
               return (
-                <CarouselItem
-                  key={index}
-                  className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4"
-                >
-                  <SquareRoundedCard
-                    title={value.title}
-                    pict={value.imgEvent}
-                  />
+                <CarouselItem key={index} className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4">
+                  <SquareRoundedCard title={value.title} pict={value.imgEvent} />
                   {/**Perlu include di backend */}
                 </CarouselItem>
               );

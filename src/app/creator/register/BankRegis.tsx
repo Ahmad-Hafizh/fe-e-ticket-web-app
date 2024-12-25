@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/global-components/CustomInput';
-import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   bank_name: z.string().min(4, { message: 'Must be more than 4 or more characters long' }).max(50, { message: 'Must be less than 50 characters long' }),
@@ -23,14 +22,13 @@ interface IBankRegis {
 }
 
 export default function BankRegis({ onNext, setData, currentData, onSubmitAllData }: IBankRegis) {
-  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bank_name: currentData.bank_name || '',
-      bank_account_name: currentData.bank_account_name || '',
-      bank_account_number: currentData.bank_account_number || '',
+      bank_name: currentData?.bank_name || '',
+      bank_account_name: currentData?.bank_account_name || '',
+      bank_account_number: currentData?.bank_account_number || '',
     },
   });
 
@@ -53,7 +51,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
                   <FormControl>
-                    <Input placeholder="Enter Bank Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Name" />
+                    <Input placeholder="Enter Bank Name" {...field} title="Bank Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0 " />
                 </FormItem>
@@ -65,7 +63,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
                   <FormControl>
-                    <Input placeholder="Bank Account Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Account Name" />
+                    <Input placeholder="Bank Account Name" {...field} title="Bank Account Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -77,7 +75,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
                   <FormControl>
-                    <Input placeholder="Bank Account Number" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Account Number" />
+                    <Input placeholder="Bank Account Number" {...field} title="Bank Account Number" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -95,7 +93,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
             >
               Previous
             </Button>
-            <Button type="submit" className="w-full rounded-full !mt-0" onClick={() => router.push('/creator/dashboard')}>
+            <Button type="submit" className="w-full rounded-full !mt-0">
               Submit
             </Button>
           </div>

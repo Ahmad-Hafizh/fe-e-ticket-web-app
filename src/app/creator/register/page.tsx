@@ -3,14 +3,54 @@
 import React, { useState } from 'react';
 import OrganizationRegis from './OrgRegis';
 import BankRegis from './BankRegis';
+import { basicGetApi } from '@/app/config/axios';
+import { useRouter } from 'next/navigation';
+
+interface IOrganization {
+  organization_name: string;
+  organization_email: string;
+  organization_phone: string;
+  organization_address: string;
+}
+
+interface IBank {
+  bank_name: string;
+  bank_account_name: string;
+  bank_account_number: string;
+}
 
 const CreatorRegisterPage = () => {
   const [page, setPage] = useState(0);
-  const [organization, setOrganization] = useState({});
-  const [bank, setBank] = useState({});
+  const [organization, setOrganization] = useState<IOrganization | null>(null);
+  const [bank, setBank] = useState<IBank | null>(null);
+  const router = useRouter();
 
-  const onSubmitAllData = () => {
-    console.log({ ...organization, ...bank });
+  const onSubmitAllData = async () => {
+    try {
+      const token = localStorage.getItem('tkn');
+      const response = await basicGetApi.patch(
+        '/users/update-role',
+        {
+          organizer_name: organization?.organization_name,
+          organizer_email: organization?.organization_email,
+          organizer_phone: organization?.organization_phone,
+          organizer_address: organization?.organization_address,
+          bank_name: bank?.bank_name,
+          bank_account_name: bank?.bank_account_name,
+          bank_account_number: bank?.bank_account_number,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('update success');
+      console.log(response);
+      router.push('/creator/dashboard');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

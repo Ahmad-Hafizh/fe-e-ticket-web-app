@@ -7,6 +7,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { basicGetApi } from '../config/axios';
+import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { signIn } from '@/lib/redux/reducers/userSlice';
 
 const formSchema = z.object({
   email: z.string().min(4, { message: 'Email must be more than 4 characters' }).max(100, { message: 'Email must be less than 100 characters' }).email({ message: 'email is invalid' }),
@@ -14,6 +18,8 @@ const formSchema = z.object({
 });
 
 const SignInPage = () => {
+  const dispatch = useAppDispatch();
+  const route = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -22,8 +28,19 @@ const SignInPage = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await basicGetApi.post('/users/signin', {
+        email: values.email,
+        password: values.password,
+      });
+
+      dispatch(signIn(response.data.result));
+      localStorage.setItem('tkn', response.data.result.token);
+      route.push('/');
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="w-full h-screen grid grid-cols-2 p-10">
