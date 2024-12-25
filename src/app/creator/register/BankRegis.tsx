@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/global-components/CustomInput';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   bank_name: z.string().min(4, { message: 'Must be more than 4 or more characters long' }).max(50, { message: 'Must be less than 50 characters long' }),
@@ -22,6 +23,7 @@ interface IBankRegis {
 }
 
 export default function BankRegis({ onNext, setData, currentData, onSubmitAllData }: IBankRegis) {
+  const route = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,6 +40,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
     // ✅ This will be type-safe and validated.
     setData(values);
     onSubmitAllData();
+    route.replace('/creator/dashboard');
   }
 
   return (
