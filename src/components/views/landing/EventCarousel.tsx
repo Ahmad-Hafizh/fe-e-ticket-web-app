@@ -2,7 +2,7 @@
 'use client';
 import EventCard from '@/components/global-components/EventCard';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { basicGetApi } from '../config/axios';
+import { basicGetApi } from '../../../app/config/axios';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -31,7 +31,6 @@ const EventCarousel: React.FC<IEventCollection> = ({ apicall, label }) => {
     try {
       setLoading(true);
       const response = await basicGetApi.get(`${apicall}`);
-      console.log(response);
       setEventData(response.data.result);
       setLoading(false);
     } catch (error) {

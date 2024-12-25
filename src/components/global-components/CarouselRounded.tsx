@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import EventCard from "@/components/global-components/EventCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { basicGetApi } from "../../app/config/axios";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import RoundedCard from "./RoundedCard";
+'use client';
+import EventCard from '@/components/global-components/EventCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { basicGetApi } from '../../app/config/axios';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import RoundedCard from './RoundedCard';
 
 interface IEventCollection {
   apicall: string;
@@ -27,7 +21,6 @@ const CarouselRounded: React.FC<IEventCollection> = ({ apicall, label }) => {
     try {
       setLoading(true);
       const response = await basicGetApi.get(`${apicall}`);
-      console.log(response);
       setEventData(response.data.result);
       setLoading(false);
     } catch (error) {
@@ -124,14 +117,8 @@ const CarouselRounded: React.FC<IEventCollection> = ({ apicall, label }) => {
         <Carousel className="w-full relative">
           <CarouselContent>
             {eventData.map((value: any, index: number) => {
-              {
-                console.log("ini value", value);
-              }
               return (
-                <CarouselItem
-                  key={index}
-                  className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4"
-                >
+                <CarouselItem key={index} className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4">
                   <RoundedCard title={value.title} pict={value.imgEvent} />
                   {/**Perlu include di backend */}
                 </CarouselItem>

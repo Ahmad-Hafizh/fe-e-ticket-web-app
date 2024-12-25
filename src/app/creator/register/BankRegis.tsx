@@ -23,14 +23,14 @@ interface IBankRegis {
 }
 
 export default function BankRegis({ onNext, setData, currentData, onSubmitAllData }: IBankRegis) {
-  const router = useRouter();
+  const route = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bank_name: currentData.bank_name || '',
-      bank_account_name: currentData.bank_account_name || '',
-      bank_account_number: currentData.bank_account_number || '',
+      bank_name: currentData?.bank_name || '',
+      bank_account_name: currentData?.bank_account_name || '',
+      bank_account_number: currentData?.bank_account_number || '',
     },
   });
 
@@ -40,6 +40,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
     // ✅ This will be type-safe and validated.
     setData(values);
     onSubmitAllData();
+    route.replace('/creator/dashboard');
   }
 
   return (
@@ -53,7 +54,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
                   <FormControl>
-                    <Input placeholder="Enter Bank Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Name" />
+                    <Input placeholder="Enter Bank Name" {...field} title="Bank Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0 " />
                 </FormItem>
@@ -65,7 +66,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
                   <FormControl>
-                    <Input placeholder="Bank Account Name" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Account Name" />
+                    <Input placeholder="Bank Account Name" {...field} title="Bank Account Name" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -77,7 +78,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
               render={({ field }) => (
                 <FormItem className="w-full h-20 relative">
                   <FormControl>
-                    <Input placeholder="Bank Account Number" {...field} className="w-full rounded-full pt-8 pb-5 px-7 !mt-0" title="Bank Account Number" />
+                    <Input placeholder="Bank Account Number" {...field} title="Bank Account Number" />
                   </FormControl>
                   <FormMessage className="text-xs ml-6 !mt-0" />
                 </FormItem>
@@ -95,7 +96,7 @@ export default function BankRegis({ onNext, setData, currentData, onSubmitAllDat
             >
               Previous
             </Button>
-            <Button type="submit" className="w-full rounded-full !mt-0" onClick={() => router.push('/creator/dashboard')}>
+            <Button type="submit" className="w-full rounded-full !mt-0">
               Submit
             </Button>
           </div>

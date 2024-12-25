@@ -1,11 +1,11 @@
 // import EventCard from '@/components/global-components/EventCard';
 // import RoundedCard from '@/components/global-components/RoundedCard';
-import TopEvent from './section/TopEvent';
-import Jumbotron from './section/Jumbotron';
-import EventCarousel from './section/EventCarousel';
+import TopEvent from '../components/views/landing/TopEvent';
+import Jumbotron from '../components/views/landing/Jumbotron';
+import EventCarousel from '../components/views/landing/EventCarousel';
 import Footer from '@/components/global-components/Footer';
 import CarouselRounded from '@/components/global-components/CarouselRounded';
-import Category from './section/Category';
+import Category from '../components/views/landing/Category';
 
 export default function Home() {
   return (

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { Button } from '../ui/button';
 import { IoMdClose } from 'react-icons/io';
@@ -7,10 +7,19 @@ import Link from 'next/link';
 import { Select, SelectItem, Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
 import { IoSearchOutline } from 'react-icons/io5';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/lib/redux/hooks';
+import { basicGetApi } from '@/app/config/axios';
+import { signIn } from '@/lib/redux/reducers/userSlice';
+import { useAppDispatch } from '@/lib/redux/hooks';
 
 export default function Navbar() {
   const path: string = usePathname();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hide, setHide] = useState<boolean>(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path === '/reset-password' || path.startsWith('/creator') ? true : false);
+
+  useEffect(() => {
+    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path === '/reset-password' || path.startsWith('/creator') ? true : false);
+  }, [path]);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleNavbar = () => {
@@ -19,6 +28,27 @@ export default function Navbar() {
   const closeNavbar = () => {
     setIsOpen(false);
   };
+
+  const user = useAppSelector((state) => state.userReducer);
+  const dispatch = useAppDispatch();
+
+  const keepLogin = async () => {
+    try {
+      const token = localStorage.getItem('tkn');
+      const response = await basicGetApi.get('/users/keep-login', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch(signIn(response.data.result));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    keepLogin();
+  }, []);
 
   const city = [
     { key: 'Jakarta', label: 'Jakarta' },
@@ -94,8 +124,8 @@ export default function Navbar() {
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-white rounded-lg">
                   <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">Signed in as</p>
-                    <p className="font-semibold">zoey@example.com</p>
+                    <p className="font-semibold">{user.name}</p>
+                    <p className="font-semibold">{user.email}</p>
                   </DropdownItem>
                   <DropdownItem key="settings">My Settings</DropdownItem>
                   <DropdownItem key="team_settings">Team Settings</DropdownItem>
