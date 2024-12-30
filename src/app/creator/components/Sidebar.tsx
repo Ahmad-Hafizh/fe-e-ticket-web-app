@@ -1,7 +1,11 @@
+'use client';
 import { Home, Settings, CreditCard, UserRoundPen, Ticket } from 'lucide-react';
-
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { basicGetApi } from '@/app/config/axios';
+import { useEffect } from 'react';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { setOrganizerData } from '@/lib/redux/reducers/organizerSlice';
 
 // Menu items.
 const dashboardItems = [
@@ -35,6 +39,25 @@ const accountItems = [
 ];
 
 export function AppSidebar() {
+  const dispatch = useAppDispatch();
+  const getOrganizer = async () => {
+    try {
+      const token = localStorage.getItem('tkn');
+      const response = await basicGetApi.get('/organizer', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch(setOrganizerData(response.data.result));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getOrganizer();
+  }, []);
+
   return (
     <Sidebar collapsible="none" className="py-4 pl-4 border-r-2 h-screen w-full">
       <SidebarHeader>
