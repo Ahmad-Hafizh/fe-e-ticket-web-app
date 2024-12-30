@@ -41,6 +41,9 @@ export default function Navbar() {
         },
       });
       dispatch(signIn(response.data.result));
+      console.log(response);
+
+      localStorage.setItem('tkn', response.data.result.newToken);
     } catch (error) {
       console.log(error);
     }
