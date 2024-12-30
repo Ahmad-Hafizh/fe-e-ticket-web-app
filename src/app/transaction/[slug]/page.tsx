@@ -1,19 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { IoMdTime } from 'react-icons/io';
-import { MdDateRange } from 'react-icons/md';
-import { IoLocationOutline } from 'react-icons/io5';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { basicGetApi } from '@/app/config/axios';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+"use client";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { IoMdTime } from "react-icons/io";
+import { MdDateRange } from "react-icons/md";
+import { IoLocationOutline } from "react-icons/io5";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { basicGetApi } from "@/app/config/axios";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 interface ITransactionPage {
   params: { slug: string };
@@ -28,27 +46,30 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
   const [finalPrice, setFinalPrice] = useState<any>(0);
   const [discount, setDiscount] = useState<any>(0);
   const [error, setError] = useState<any | null>(null);
+  const user = useAppSelector((state) => state.userReducer);
+
+  if (!user.name) {
+    route.push("/sign-in");
+  }
+  console.log("ini user:", user);
 
   useEffect(() => {
     const getData = async () => {
       try {
         setLoading(true);
-        const slug = (await params).slug;
-        console.log('getting data');
-        const responseEvent = await basicGetApi.get(`event/${slug}`);
-        console.log(responseEvent);
-        setEventData(responseEvent.data.result);
-
-        const responseTransaction = await basicGetApi.get(`transaction/details/18`);
-        //18 represent user. But this logic is totally WRONG. What if user had previous order?
-        console.log('tICKET RESPONSE: ', responseTransaction.data.result);
-        setTransactionDetailData(responseTransaction.data.result);
+        const transactionData = sessionStorage.getItem("transaction-data")
+          ? JSON.parse(sessionStorage.getItem("transaction-data")!)
+          : null;
+        setEventData(transactionData.event);
+        setTransactionDetailData(transactionData.ticket.data);
+        console.log("Ini transactionData: ", transactionData.ticket.data);
+        console.log("Ini transactionDetailData: ", transactionDetailData);
         setLoading(false);
       } catch (error) {
         setError(error);
       }
     };
-    console.log('getting data');
+    console.log("getting data");
     getData();
   }, []);
 
@@ -69,34 +90,32 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
   //form validation
   const formSchema = z.object({
     coupon: z.string().optional(),
-    payment: z.enum(['BANK_TRANSFER', 'E_WALLET', 'CREDIT_CARD']),
+    payment: z.enum(["BANK_TRANSFER", "E_WALLET", "CREDIT_CARD"]),
     terms: z.boolean().refine((val) => val === true, {
-      message: 'You must agree to the terms and conditions.',
+      message: "You must agree to the terms and conditions.",
     }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      coupon: '',
-      payment: 'BANK_TRANSFER',
+      coupon: "",
+      payment: "BANK_TRANSFER",
       terms: true,
     },
   });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log('transactiondetaildata:', transactionDetailData);
     let transactionDetailsIds;
     if (transactionDetailData && transactionDetailData.length > 0) {
       // Extract transaction_details_id from each item
-      transactionDetailsIds = transactionDetailData.map((value: any) => value.transaction_details_id);
+      transactionDetailsIds = transactionDetailData.map(
+        (value: any) => value.transaction_details_id
+      );
 
       const payloadTransaction = {
         data: {
-          evenId: eventData.event_id,
           transactionDetailsId: transactionDetailsIds,
           totalAmount: finalPrice,
           isPaid: false,
@@ -105,10 +124,19 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
         },
       };
 
-      console.log('payload:', payloadTransaction);
+      const transactionData = sessionStorage.getItem("transaction-data")
+        ? JSON.parse(sessionStorage.getItem("transaction-data")!)
+        : null;
+
+      const payloadUltimate = {
+        ...transactionData,
+        transactions: payloadTransaction?.data,
+      };
+
+      console.log("payload siap kirim:", payloadUltimate);
       try {
-        const postTransaction = await basicGetApi.post('/transaction', payloadTransaction);
-        route.push('/transaction/confirm');
+        await basicGetApi.post("/transaction", payloadUltimate);
+        route.push("/transaction/confirm");
       } catch (error) {
         console.log(error);
       }
@@ -137,24 +165,27 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                     <h1 className="font-bold text-2xl">{eventData.title}</h1>
                     <div className="flex-col flex text-lg md:text-xl justify-center gap-2">
                       <h1 className="flex gap-3">
-                        {' '}
+                        {" "}
                         <IoLocationOutline />
-                        {eventData.event_location.address_name} {eventData.event_location.address}
+                        {eventData.event_location.address_name}{" "}
+                        {eventData.event_location.address}
                       </h1>
                       <h1 className="flex gap-3">
-                        {' '}
+                        {" "}
                         <IoMdTime />
                         {eventData.startTime} - {eventData.endTime}
                       </h1>
                       {eventData.endDate ? (
                         <h1 className="flex gap-3">
-                          {' '}
-                          <MdDateRange /> {eventData.startDate} - {eventData.endDate} {eventData.timezone}
+                          {" "}
+                          <MdDateRange /> {eventData.startDate} -{" "}
+                          {eventData.endDate} {eventData.timezone}
                         </h1>
                       ) : (
                         <h1 className="flex gap-3">
-                          {' '}
-                          <MdDateRange /> {eventData.startDate} {eventData.timezone}
+                          {" "}
+                          <MdDateRange /> {eventData.startDate}{" "}
+                          {eventData.timezone}
                         </h1>
                       )}
                     </div>
@@ -176,15 +207,20 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                     </div>
                     <div className="ticket w-full flex flex-col justify-between text-base py-2 lg:px-7">
                       {transactionDetailData.length > 0 ? (
-                        transactionDetailData.map((value: any, index: number) => {
-                          return (
-                            <div className="w-full flex justify-between" key={index}>
-                              <h1>{value.ticket_types.types}</h1>
-                              <h1>{value.quantity_bought}</h1>
-                              <h1>{value.ticket_types.price}</h1>
-                            </div>
-                          );
-                        })
+                        transactionDetailData.map(
+                          (value: any, index: number) => {
+                            return (
+                              <div
+                                className="w-full flex justify-between"
+                                key={index}
+                              >
+                                <h1>{value?.types}</h1>
+                                <h1>{value?.quantityBought}</h1>
+                                <h1>{value?.price}</h1>
+                              </div>
+                            );
+                          }
+                        )
                       ) : (
                         <div>No transaction details available</div>
                       )}
@@ -202,9 +238,9 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                   </CardHeader>
                   <CardContent>
                     <div className="text-xl flex flex-col gap-3">
-                      <h1>Fullname: {transactionDetailData[0]?.user?.name as any}</h1>
-                      <h1>Email: {transactionDetailData[0]?.user?.email as any}</h1>
-                      <h1>Phone Number: {transactionDetailData[0]?.user?.profile?.phone as any}</h1>
+                      <h1>Fullname: {user.name}</h1>
+                      <h1>Email: {user.email}</h1>
+                      <h1>Phone Number: </h1>
                       <h1>Address: </h1>
                     </div>
                   </CardContent>
@@ -215,7 +251,10 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
         </div>
         <div className="w-full h-full relative">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
               <Card>
                 <CardHeader>
                   <h1 className="text-xl font-bold">Summary</h1>
@@ -240,7 +279,10 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                   <div className="flex flex-col py-2 gap-2">
                     <h1>Input your coupon</h1>
                     <div className="flex gap-3 justify-between items-center h-full ">
-                      <input type="text" className="h-8 w-full border rounded-lg shadow-sm p-2" />
+                      <input
+                        type="text"
+                        className="h-8 w-full border rounded-lg shadow-sm p-2"
+                      />
                       <Button type="button">Input coupon</Button>
                     </div>
                     <Accordion type="single" collapsible defaultValue="item-1">
@@ -255,24 +297,34 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                             render={({ field }) => (
                               <FormItem className="space-y-3">
                                 <FormControl>
-                                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                                  <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex flex-col space-y-1"
+                                  >
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                       <FormControl>
                                         <RadioGroupItem value="CREDIT_CARD" />
                                       </FormControl>
-                                      <FormLabel className="font-normal">Credit Card</FormLabel>
+                                      <FormLabel className="font-normal">
+                                        Credit Card
+                                      </FormLabel>
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                       <FormControl>
                                         <RadioGroupItem value="BANK_TRANSFER" />
                                       </FormControl>
-                                      <FormLabel className="font-normal">Bank Transfer</FormLabel>
+                                      <FormLabel className="font-normal">
+                                        Bank Transfer
+                                      </FormLabel>
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                       <FormControl>
                                         <RadioGroupItem value="E_WALLET" />
                                       </FormControl>
-                                      <FormLabel className="font-normal">E-Wallet</FormLabel>
+                                      <FormLabel className="font-normal">
+                                        E-Wallet
+                                      </FormLabel>
                                     </FormItem>
                                   </RadioGroup>
                                 </FormControl>
@@ -287,7 +339,8 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
                   <div className="flex gap-2 justify-start items-center w-full">
-                    <input type="checkbox" id="terms" value="" /> <h1>I agree to terms and condition</h1>
+                    <input type="checkbox" id="terms" value="" />{" "}
+                    <h1>I agree to terms and condition</h1>
                   </div>
                   <div className="w-full">
                     <Button className="w-full h-full">Buy now</Button>
