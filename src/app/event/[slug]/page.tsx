@@ -53,6 +53,9 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
   }, [ticketQuantities]);
 
   useEffect(() => {
+    const currentUrl = window.location.pathname;
+    localStorage.setItem("redirectTo", currentUrl);
+
     const getData = async () => {
       try {
         setLoading(true);
@@ -373,11 +376,8 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                         Total Price : Rp. {totalPrice}
                       </h1>
                     </div>
-                    {localStorage.getItem("tkn") ? (
-                      <Link href={`/sign-in`}>
-                        <Button type="submit"></Button>
-                      </Link>
-                    ) : (
+                    {localStorage.getItem("tkn") ||
+                    sessionStorage.getItem("tkn") ? (
                       <Button
                         type="submit"
                         onClick={() => {
@@ -402,6 +402,10 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                       >
                         Buy Now
                       </Button>
+                    ) : (
+                      <Link href={`/sign-in`}>
+                        <Button type="submit">Buy Now</Button>
+                      </Link>
                     )}
 
                     {/* <Dialog>
