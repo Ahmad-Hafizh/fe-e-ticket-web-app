@@ -1,3 +1,4 @@
+
 //MASIH BELUM BISA HAPUS VALUE QUERY YANG SUDAH ADA
 
 "use client";
@@ -15,6 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const searchPage = () => {
   const [allLocation, setAllLocation] = useState<any>([]);
+
   // const [url, setUrl] = useState<string>("");
   const [filterData, setFilterData] = useState<any>([]);
   const [pricemin, setPricemin] = useState<string>("");
@@ -23,6 +25,7 @@ const searchPage = () => {
   const [toDate, setToDate] = useState<string>("");
   const router = useRouter();
   const params = useSearchParams();
+
 
   const getAllLocation = async () => {
     try {
@@ -37,9 +40,11 @@ const searchPage = () => {
     }
   };
 
+
   const showEvent = async (url: string) => {
     try {
       const response = await basicGetApi.get(`${url}`);
+
       const filteredData = response.data.result;
       setFilterData(filteredData);
       console.log("filterData", filterData);
@@ -131,6 +136,7 @@ const searchPage = () => {
           searchParams.delete(key);
         }
       }
+
     }
     router.push(`?${searchParams.toString()}`);
   };
@@ -195,6 +201,7 @@ const searchPage = () => {
                 <AccordionContent>
                   <div className="flex gap-2 justify-between items-center">
                     <label>Music</label>
+
                     <input
                       type="checkbox"
                       id="category"
@@ -232,6 +239,7 @@ const searchPage = () => {
                       value="International"
                       onChange={(e) => handlingFilter("cat", e)}
                     />
+
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -248,8 +256,10 @@ const searchPage = () => {
                               type="checkbox"
                               id="location"
                               name={`${value.city_name}`}
+
                               value={`${value.city_name}`}
                               onChange={(e) => handlingFilter("city", e)}
+
                             />
                           </div>
                         );
@@ -264,16 +274,19 @@ const searchPage = () => {
                     <input
                       type="number"
                       id="price"
+
                       name="pricemin"
                       className="border rounded-sm p-2 shadow-sm"
                       placeholder="Price from Rp..."
                       value={pricemin}
                       onChange={(e) => handlePriceFilter(e)}
+
                     />{" "}
                     -
                     <input
                       type="number"
                       id="price"
+
                       name="pricemax"
                       className="border rounded-sm p-2 shadow-sm"
                       placeholder="Price to Rp..."
@@ -282,6 +295,7 @@ const searchPage = () => {
                     />
                   </div>
                   <Button onClick={setPrice}>Set Price</Button>
+
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="date">
@@ -291,14 +305,17 @@ const searchPage = () => {
                     <input
                       type="date"
                       id="price"
+
                       name="startdate"
                       className="border rounded-sm p-2  shadow-sm"
                       placeholder="Price from Rp..."
                       onChange={(e) => handlingDateFilter(e)}
+
                     />
                     <input
                       type="date"
                       id="price"
+
                       name="enddate"
                       className="border rounded-sm p-2  shadow-sm"
                       placeholder="Price to Rp..."
@@ -306,6 +323,7 @@ const searchPage = () => {
                     />
                   </div>
                   <Button onClick={setDate}>Set Date</Button>
+
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -313,7 +331,9 @@ const searchPage = () => {
         </div>
         <div className="product w-full p-4 col-span-3">
           <div className="flex gap-1 flex-wrap justify-between">
+
             {filterData && filterData.length > 0 ? (
+
               filterData.map((value: any, index: number) => {
                 return (
                   <EventCard
@@ -336,6 +356,7 @@ const searchPage = () => {
                 No Data Founded.
               </div>
             )}
+
           </div>
         </div>
       </div>

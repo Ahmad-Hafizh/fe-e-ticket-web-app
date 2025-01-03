@@ -376,6 +376,7 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                         Total Price : Rp. {totalPrice}
                       </h1>
                     </div>
+
                     {localStorage.getItem("tkn") ||
                     sessionStorage.getItem("tkn") ? (
                       <Button

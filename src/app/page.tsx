@@ -40,6 +40,7 @@ export default function Home() {
         <EventCarousel
           label="Event Picked for You"
           apicall="/search?cat=Music"
+
         />
       </div>
       {/**Component Slider Rounded (kategori) */}
@@ -51,7 +52,9 @@ export default function Home() {
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
         <EventCarousel
           label="Event in your location"
+
           apicall="/search?city=Bandung"
+
         />
       </div>
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
