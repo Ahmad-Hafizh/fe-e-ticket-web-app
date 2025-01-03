@@ -35,11 +35,12 @@ export default function Home() {
       {/* <div className="bg-gradient-to-tr from-[#FFB457] to-[#FF705B] w-full h-full px-14 md:px-32 lg:px-48 py-20"> */}
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
         {/**Component Slider Jumbotron */}
-        <Jumbotron apicall="/event?cat=Music" />
+        <Jumbotron apicall="/search?cat=Music" />
         {/**Component Slider Event (Event pilihan) */}
         <EventCarousel
           label="Event Picked for You"
-          apicall="/event?cat=Music"
+          apicall="/search?cat=Music"
+
         />
       </div>
       {/**Component Slider Rounded (kategori) */}
@@ -51,14 +52,16 @@ export default function Home() {
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
         <EventCarousel
           label="Event in your location"
-          apicall="/event?city=Surabaya"
+
+          apicall="/search?city=Bandung"
+
         />
       </div>
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
-        <CarouselRounded label="Creator" apicall="/event?city=Surabaya" />
+        <CarouselRounded label="Creator" apicall="/event?eo=18" />
       </div>
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
-        <Category label="Category" apicall="/event?city=Surabaya" />
+        <Category label="Category" apicall="/search?city=Surabaya" />
       </div>
 
       {/**Component List Event (Top event) */}
