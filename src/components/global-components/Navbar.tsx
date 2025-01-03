@@ -6,19 +6,20 @@ import { IoMdClose } from 'react-icons/io';
 import Link from 'next/link';
 import { Select, SelectItem, Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
 import { IoSearchOutline } from 'react-icons/io5';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector } from '@/lib/redux/hooks';
 import { basicGetApi } from '@/app/config/axios';
-import { signIn } from '@/lib/redux/reducers/userSlice';
+import { signIn, signOut } from '@/lib/redux/reducers/userSlice';
 import { useAppDispatch } from '@/lib/redux/hooks';
 
 export default function Navbar() {
   const path: string = usePathname();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [hide, setHide] = useState<boolean>(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path === '/reset-password' || path.startsWith('/creator') ? true : false);
+  const [hide, setHide] = useState<boolean>(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/creator') ? true : false);
+  const route = useRouter();
 
   useEffect(() => {
-    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path === '/reset-password' || path.startsWith('/creator') ? true : false);
+    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/creator') ? true : false);
   }, [path]);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -34,19 +35,24 @@ export default function Navbar() {
 
   const keepLogin = async () => {
     try {
-      const token = localStorage.getItem('tkn');
+      const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
       const response = await basicGetApi.get('/users/keep-login', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       dispatch(signIn(response.data.result));
-      console.log(response);
-
       localStorage.setItem('tkn', response.data.result.newToken);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const logOut = () => {
+    dispatch(signOut());
+    localStorage.removeItem('tkn');
+    sessionStorage.removeItem('tkn');
+    route.refresh();
   };
 
   useEffect(() => {
@@ -128,16 +134,19 @@ export default function Navbar() {
                 <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-white rounded-lg">
                   <DropdownItem key="profile" className="h-14 gap-2">
                     <p className="font-semibold">{user.name}</p>
-                    <p className="font-semibold">{user.email}</p>
+                    <p className="text-xs">{user.email}</p>
                   </DropdownItem>
-                  <DropdownItem key="settings">My Settings</DropdownItem>
-                  <DropdownItem key="team_settings">Team Settings</DropdownItem>
-                  <DropdownItem key="analytics">Analytics</DropdownItem>
-                  <DropdownItem key="system">System</DropdownItem>
-                  <DropdownItem key="configurations">Configurations</DropdownItem>
-                  <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+                  <DropdownItem key="settings">Settings</DropdownItem>
+                  <DropdownItem key="team_settings">Organizer</DropdownItem>
+                  <DropdownItem key="help_and_feedback">
+                    <Button type="button" className="border bg-white text-black hover:bg-gray-200 w-full" onClick={() => route.push('/sign-in')}>
+                      Switch Account
+                    </Button>
+                  </DropdownItem>
                   <DropdownItem key="logout" color="danger">
-                    Log Out
+                    <Button type="button" className="bg-red-700 hover:bg-red-800 w-full" onClick={logOut}>
+                      Log out
+                    </Button>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

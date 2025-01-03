@@ -2,7 +2,7 @@
 import { Input } from '@/components/global-components/CustomInput';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { basicGetApi } from '../config/axios';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { signIn } from '@/lib/redux/reducers/userSlice';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const formSchema = z.object({
   email: z.string().min(4, { message: 'Email must be more than 4 characters' }).max(100, { message: 'Email must be less than 100 characters' }).email({ message: 'email is invalid' }),
@@ -19,6 +20,7 @@ const formSchema = z.object({
 
 const SignInPage = () => {
   const dispatch = useAppDispatch();
+  const [remember, setRemember] = useState(false);
   const route = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,12 +38,17 @@ const SignInPage = () => {
       });
 
       dispatch(signIn(response.data.result));
-      localStorage.setItem('tkn', response.data.result.token);
+      if (remember) {
+        localStorage.setItem('tkn', response.data.result.token);
+      } else {
+        sessionStorage.setItem('tkn', response.data.result.token);
+      }
       route.push('/');
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div className="w-full h-screen grid grid-cols-2 p-10">
       <div className="w-full p-20 flex flex-col gap-10 justify-center h-full">
@@ -79,6 +86,10 @@ const SignInPage = () => {
                   </FormItem>
                 )}
               />
+            </div>
+            <div className="flex gap-1 items-center ml-5 mb-2">
+              <Checkbox id="keep-login-button" onCheckedChange={() => setRemember(!remember)} defaultChecked={remember} />
+              <label htmlFor="keep-login-button">Remember me</label>
             </div>
             <Button type="submit" className="w-full rounded-full">
               Sign in
