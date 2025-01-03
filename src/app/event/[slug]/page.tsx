@@ -16,6 +16,7 @@ import ReviewSubmit from "@/components/views/event/message";
 // import { Label } from '@/components/ui/label';
 // import axios from 'axios';
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface IEventDetailPage {
   params: { slug: string };
@@ -72,7 +73,6 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
   if (loading) {
     return (
       <>
-        <Navbar />
         <div className="bg-white w-full h-full lg:px-48 py-10 flex flex-col gap-20">
           <div className="bg-white lg:grid lg:grid-cols-[2fr_1fr]">
             <div className="lg:flex lg:flex-col lg:items-end lg:justify-end">
@@ -124,7 +124,6 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
 
   return (
     <>
-      <Navbar />
       <div className="bg-white w-full h-full lg:px-48 py-10 flex flex-col gap-20 ">
         <div className="bg-white lg:grid lg:grid-cols-[2fr_1fr] relative ">
           <div className="lg:flex lg:flex-col lg:items-end lg:justify-end">
@@ -374,30 +373,37 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                         Total Price : Rp. {totalPrice}
                       </h1>
                     </div>
-                    <Button
-                      type="submit"
-                      onClick={() => {
-                        const payload = submitTransactionDetails();
-                        console.log("ini payload: ", payload);
-                        console.log("ini event: ", eventData);
-                        const payloadUltimate = {
-                          ticket: payload,
-                          event: eventData,
-                        };
-                        console.log("ini payloadultimate: ", payloadUltimate);
-                        const payloadEventAndTicket = basicGetApi.post(
-                          "/transaction/details",
-                          payload
-                        );
-                        sessionStorage.setItem(
-                          "transaction-data",
-                          JSON.stringify(payloadUltimate)
-                        );
-                        route.push(`/transaction/${eventData.event_id}`);
-                      }}
-                    >
-                      Buy Now
-                    </Button>
+                    {localStorage.getItem("tkn") ? (
+                      <Link href={`/sign-in`}>
+                        <Button type="submit"></Button>
+                      </Link>
+                    ) : (
+                      <Button
+                        type="submit"
+                        onClick={() => {
+                          const payload = submitTransactionDetails();
+                          console.log("ini payload: ", payload);
+                          console.log("ini event: ", eventData);
+                          const payloadUltimate = {
+                            ticket: payload,
+                            event: eventData,
+                          };
+                          console.log("ini payloadultimate: ", payloadUltimate);
+                          const payloadEventAndTicket = basicGetApi.post(
+                            "/transaction/details",
+                            payload
+                          );
+                          sessionStorage.setItem(
+                            "transaction-data",
+                            JSON.stringify(payloadUltimate)
+                          );
+                          route.push(`/transaction/${eventData.event_id}`);
+                        }}
+                      >
+                        Buy Now
+                      </Button>
+                    )}
+
                     {/* <Dialog>
                       <DialogTrigger asChild>
                         <Button className="bg-blue-400 text-lg font-semibold">

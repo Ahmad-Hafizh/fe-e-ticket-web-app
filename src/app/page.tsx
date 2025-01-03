@@ -18,8 +18,8 @@ export default function Home() {
     try {
       setIsLoading(true);
       const response = await basicGetApi.get("/event/all");
-      console.log("ini event all", response.data);
-      setAllEvent(response);
+      console.log("ini event all", response.data.result);
+      setAllEvent(response.data.result);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

@@ -46,11 +46,12 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
   const [finalPrice, setFinalPrice] = useState<any>(0);
   const [discount, setDiscount] = useState<any>(0);
   const [error, setError] = useState<any | null>(null);
+
   const user = useAppSelector((state) => state.userReducer);
 
-  if (!user.name) {
-    route.push("/sign-in");
-  }
+  // if (!user.name) {
+  //   route.push("/sign-in");
+  // }
   console.log("ini user:", user);
 
   useEffect(() => {
