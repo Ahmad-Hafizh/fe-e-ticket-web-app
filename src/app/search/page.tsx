@@ -13,6 +13,8 @@ import { basicGetApi } from "../config/axios";
 import { Button } from "@/components/ui/button";
 import EventCard from "@/components/global-components/EventCard";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Input } from "@nextui-org/react";
+import { IoSearchOutline } from "react-icons/io5";
 
 const searchPage = () => {
   const [allLocation, setAllLocation] = useState<any>([]);
@@ -188,7 +190,17 @@ const searchPage = () => {
   }, [fromDate, toDate]);
 
   return (
-    <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20 border border-red-500">
+    <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-10 border border-red-500">
+      <div>
+        {" "}
+        <Input
+          placeholder="Search event here.."
+          startContent={<IoSearchOutline />}
+          type="text"
+          name="search"
+          className="border-none w-full active:border-blue-600"
+        />
+      </div>
       <div className="container lg:grid lg:grid-cols-4">
         <div className="filter w-full p-4">
           <div>
