@@ -6,20 +6,23 @@ import { IoMdClose } from 'react-icons/io';
 import Link from 'next/link';
 import { Select, SelectItem, Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
 import { IoSearchOutline } from 'react-icons/io5';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAppSelector } from '@/lib/redux/hooks';
 import { basicGetApi } from '@/app/config/axios';
 import { signIn, signOut } from '@/lib/redux/reducers/userSlice';
 import { useAppDispatch } from '@/lib/redux/hooks';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const path: string = usePathname();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [hide, setHide] = useState<boolean>(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/creator') ? true : false);
+  const [hide, setHide] = useState<boolean>(
+    path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false
+  );
   const route = useRouter();
 
   useEffect(() => {
-    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/creator') ? true : false);
+    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false);
   }, [path]);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -126,31 +129,50 @@ export default function Navbar() {
                 </li>
               </ul>
             </div>
-            <div className="hidden lg:inline">
-              <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                  <Avatar isBordered as="button" className="transition-transform" color="secondary" name="Jason Hughes" size="sm" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-white rounded-lg">
-                  <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">{user.name}</p>
-                    <p className="text-xs">{user.email}</p>
-                  </DropdownItem>
-                  <DropdownItem key="settings">Settings</DropdownItem>
-                  <DropdownItem key="team_settings">Organizer</DropdownItem>
-                  <DropdownItem key="help_and_feedback">
-                    <Button type="button" className="border bg-white text-black hover:bg-gray-200 w-full" onClick={() => route.push('/sign-in')}>
-                      Switch Account
-                    </Button>
-                  </DropdownItem>
-                  <DropdownItem key="logout" color="danger">
-                    <Button type="button" className="bg-red-700 hover:bg-red-800 w-full" onClick={logOut}>
-                      Log out
-                    </Button>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
+            {user.name ? (
+              <div className="hidden lg:inline">
+                <Dropdown placement="bottom-end">
+                  <DropdownTrigger>
+                    <div className="flex gap-4 items-center cursor-pointer">
+                      <Avatar isBordered as="button" className="transition-transform" color="secondary" name="Jason Hughes" size="sm" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
+                      <p>{user.name}</p>
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-white rounded-lg">
+                    <DropdownItem key="profile" className="h-14 gap-2">
+                      <p className="font-semibold">{user.name}</p>
+                      <p className="text-xs">{user.email}</p>
+                    </DropdownItem>
+                    <DropdownItem key="settings">
+                      <Link href={'/setting/profile'}>Settings</Link>
+                    </DropdownItem>
+                    <DropdownItem key="team_settings">
+                      <Link href={'/creator/dashboard'}>Dashboard</Link>
+                    </DropdownItem>
+                    <DropdownItem key="help_and_feedback">
+                      <Button type="button" className="border bg-white text-black hover:bg-gray-200 w-full" onClick={() => route.push('/sign-in')}>
+                        Switch Account
+                      </Button>
+                    </DropdownItem>
+                    <DropdownItem key="logout" color="danger">
+                      <Button type="button" className="bg-red-700 hover:bg-red-800 w-full" onClick={logOut}>
+                        Log out
+                      </Button>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            ) : (
+              <div className="cta hidden lg:flex gap-2">
+                <Link href={`/sign-in`}>
+                  <Button>Login</Button>
+                </Link>
+                <Link href={`/sign-up`}>
+                  <Button>Sign Up</Button>
+                </Link>
+              </div>
+            )}
+
             <div className="cta hidden">
               <Link href={`https://cal.com/satrio-langlang-vlenyy/introductorycall`}>
                 <Button>Login</Button>

@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import Autoplay from 'embla-carousel-autoplay';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useRef, useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Skeleton } from '@/components/ui/skeleton';
-import { basicGetApi } from '../../../app/config/axios';
+"use client";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import { basicGetApi } from "../../../app/config/axios";
 
 interface IJumbotron {
   apicall: string;
@@ -40,7 +46,12 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
 
   return (
     <div className="w-full">
-      <Carousel plugins={[plugin.current]} className="w-full relative group" onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
+      <Carousel
+        plugins={[plugin.current]}
+        className="w-full relative group"
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.reset}
+      >
         <CarouselContent>
           {loading ? (
             <CarouselItem className="basis-full">
@@ -55,7 +66,12 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
               <CarouselItem key={index} className="basis-full">
                 <div className="rounded-xl overflow-hidden">
                   <div className="relative w-full h-96 overflow-hidden">
-                    <Image src={value.imgEvent} alt="jumbotron img" fill className="absolute object-cover rounded-lg" />
+                    <Image
+                      src={value.imgEvent}
+                      alt="jumbotron img"
+                      fill
+                      className="absolute object-cover rounded-lg"
+                    />
                   </div>
                 </div>
               </CarouselItem>

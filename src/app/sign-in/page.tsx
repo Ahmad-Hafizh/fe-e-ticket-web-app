@@ -22,6 +22,7 @@ const SignInPage = () => {
   const dispatch = useAppDispatch();
   const [remember, setRemember] = useState(false);
   const route = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,6 +44,7 @@ const SignInPage = () => {
       } else {
         sessionStorage.setItem('tkn', response.data.result.token);
       }
+
       route.push('/');
     } catch (error) {
       console.log(error);

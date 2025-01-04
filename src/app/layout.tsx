@@ -4,6 +4,7 @@ import './globals.css';
 import { NextUIProvider } from '@nextui-org/react';
 import Navbar from '@/components/global-components/Navbar';
 import StoreProvider from './StoreProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,6 +32,7 @@ export default function RootLayout({
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <Navbar />
           <NextUIProvider>{children}</NextUIProvider>
+          <Toaster />
         </body>
       </StoreProvider>
     </html>
