@@ -43,6 +43,7 @@ export default function Home() {
       {/* <div className="bg-gradient-to-tr from-[#FFB457] to-[#FF705B] w-full h-full px-14 md:px-32 lg:px-48 py-20"> */}
       <div className="bg-white w-full h-full py-14 px-10 md:px-32 lg:px-48 lg:py-20 lg:pb-24 flex flex-col gap-14 lg:gap-20 ">
         {/**Component Slider Jumbotron */}
+
         {allEvent?.topEvents ? (
           <Jumbotron eventDataFromLandingPage={allEvent.topEvents} />
         ) : (
@@ -58,6 +59,7 @@ export default function Home() {
         ) : (
           <EventCarouselSkeleton />
         )}
+
       </div>
       {/**Component Slider Rounded (kategori) */}
       <div className="bg-blue-950">
@@ -69,6 +71,7 @@ export default function Home() {
           )}
         </div>
       </div>
+
       <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-12 lg:py-20 flex flex-col gap-20">
         {allEvent?.location ? (
           <EventCarouselLocation eventDataFromMain={allEvent.location} />
@@ -104,6 +107,7 @@ export default function Home() {
         <Link href="/search">
           <Button variant={"secondary"}>Check More Events</Button>
         </Link>
+
       </div>
       {/* <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-20">
         <Category label="Category" apicall="/search?city=Surabaya" />
