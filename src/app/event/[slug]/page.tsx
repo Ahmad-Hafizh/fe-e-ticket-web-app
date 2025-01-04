@@ -224,12 +224,40 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                 })}
                 <div className="ticket flex justify-between py-2 lg:py-4 lg:px-10 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3">
                   <div>
-                    <h1>Total ticket : {selectValue}</h1>
-                    <h1>Total Price : {selectValue}</h1>
+                    <h1>Total ticket : {totalQuantity}</h1>
+                    <h1>Total Price : Rp. {totalPrice}</h1>
                   </div>
-                  <Button className="bg-blue-400 text-lg font-semibold">
-                    Buy Ticket
-                  </Button>
+                  {localStorage.getItem("tkn") ||
+                  sessionStorage.getItem("tkn") ? (
+                    <Button
+                      type="submit"
+                      onClick={() => {
+                        const payload = submitTransactionDetails();
+                        console.log("ini payload: ", payload);
+                        console.log("ini event: ", eventData);
+                        const payloadUltimate = {
+                          ticket: payload,
+                          event: eventData,
+                        };
+                        console.log("ini payloadultimate: ", payloadUltimate);
+                        const payloadEventAndTicket = basicGetApi.post(
+                          "/transaction/details",
+                          payload
+                        );
+                        sessionStorage.setItem(
+                          "transaction-data",
+                          JSON.stringify(payloadUltimate)
+                        );
+                        route.push(`/transaction/${eventData.event_id}`);
+                      }}
+                    >
+                      Buy Now
+                    </Button>
+                  ) : (
+                    <Link href={`/sign-in`}>
+                      <Button type="submit">Buy Now</Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -252,38 +280,7 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                 What do you think of this event?
               </h1>
               <div className="ticket flex flex-col justify-between p-5 lg:p-10 items-center bg-gray-100 rounded-lg shadow-md">
-                {/* <div className="flex justify-between w-full py-3 px-2">
-                  <div>
-                    <h1 className="text-lg font-bold">Score </h1>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <select
-                      className="p-1 font-bold text-lg"
-                      onChange={selectValueSetting}
-                    >
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
-                    <h2 className="text-lg font-bold">/ 5</h2>
-
-                    <Button>Buy Ticket</Button>
-                  </div>
-                </div> */}
                 <ReviewSubmit eventId={eventData.event_id} />
-
-                {/* <div className="w-full flex flex-col justify-start items-end">
-                  <textarea
-                    className="w-full h-20 p-3 rounded-xl mb-4"
-                    placeholder="Write your review here"
-                    maxLength={150}
-                  ></textarea>
-                  <Button className="bg-blue-400 text-lg font-semibold">
-                    Submit
-                  </Button>
-                </div> */}
               </div>
             </div>
             <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-5 flex flex-col">
@@ -408,74 +405,6 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                         <Button type="submit">Buy Now</Button>
                       </Link>
                     )}
-
-                    {/* <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="bg-blue-400 text-lg font-semibold">
-                          Buy Ticket
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="w-full">
-                        <DialogHeader>
-                          <DialogTitle className="font-bold text-2xl">
-                            Confirm your order
-                          </DialogTitle>
-                          <DialogDescription>
-                            Hey there, please make sure you have your details
-                            correct!
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="flex w-full">
-                          <div className="flex w-full justify-between items-start">
-                            <div className="Info User">
-                              <h1>Username :</h1>
-                              <h1>Fullname :</h1>
-                              <h1>Email :</h1>
-                              <h1>Address :</h1>
-                              <h1>Telephone :</h1>
-                            </div>
-                            <div className="ticket">
-                              {eventData.ticket_types
-                                .map((ticket: any, index: number) => ({
-                                  ...ticket,
-                                  quantity: ticketQuantities[index],
-                                }))
-                                .filter((ticket: any) => ticket.quantity > 0)
-                                .map((ticket: any, index: number) => {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="ticket flex gap-4 justify-between items-start w-full"
-                                    >
-                                      <h1 className="text-md flex justify-between gap-4">
-                                        {ticket.types} x{" "}
-                                        {ticketQuantities[index]}
-                                      </h1>
-
-                                      <h2 className="text-md">
-                                        Price: IDR.{ticket.price}
-                                      </h2>
-                                    </div>
-                                  );
-                                })}
-                            </div>
-                          </div>
-                          <div className="summary"></div>
-                        </div>
-                        <DialogFooter>
-                          <Button
-                            type="submit"
-                            onClick={() => {
-                              const payload = submitTransactionDetails();
-                              basicGetApi.post("/transaction/details", payload);
-                              route.push(`/transaction/userIdAndDateTime`);
-                            }}
-                          >
-                            Buy Now
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog> */}
                   </div>
                 </div>
               </div>

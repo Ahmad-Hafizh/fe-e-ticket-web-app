@@ -12,29 +12,34 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { basicGetApi } from "../../../app/config/axios";
+import { useRouter } from "next/navigation";
+import { set } from "zod";
 
 interface IJumbotron {
-  apicall: string;
+  // apicall: string;
+  eventDataFromLandingPage: any[];
 }
 
-const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
+const Jumbotron: React.FC<IJumbotron> = ({ eventDataFromLandingPage }) => {
   const [eventData, setEventData] = useState<any | null>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any | null>(null);
+  const route = useRouter();
 
-  const getData = async () => {
-    try {
-      setLoading(true);
-      const response = await basicGetApi.get(`${apicall}`);
-      setEventData(response.data.result);
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-    }
-  };
+  // const getData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await basicGetApi.get(`${apicall}`);
+  //     setEventData(response.data.result);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setError(error);
+  //   }
+  // };
 
   useEffect(() => {
-    getData();
+    setEventData(eventDataFromLandingPage);
+    setLoading(false);
   }, []);
 
   //Carousel Jumbotron
@@ -70,7 +75,10 @@ const Jumbotron: React.FC<IJumbotron> = ({ apicall }) => {
                       src={value.imgEvent}
                       alt="jumbotron img"
                       fill
-                      className="absolute object-cover rounded-lg"
+                      className="absolute object-cover rounded-lg cursor-pointer"
+                      onClick={() => {
+                        route.push(`/event/${value.title}`);
+                      }}
                     />
                   </div>
                 </div>
