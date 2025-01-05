@@ -1,7 +1,14 @@
-
-//MASIH BELUM BISA HAPUS VALUE QUERY YANG SUDAH ADA
-
 "use client";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
 import {
   Accordion,
   AccordionContent,
@@ -15,19 +22,21 @@ import EventCard from "@/components/global-components/EventCard";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@nextui-org/react";
 import { IoSearchOutline } from "react-icons/io5";
+import { useDebounce } from "use-debounce";
+import Paginations from "./component/pagination";
 
 const searchPage = () => {
   const [allLocation, setAllLocation] = useState<any>([]);
-
-  // const [url, setUrl] = useState<string>("");
   const [filterData, setFilterData] = useState<any>([]);
   const [pricemin, setPricemin] = useState<string>("");
   const [pricemax, setPricemax] = useState<string>("");
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(0);
   const router = useRouter();
   const params = useSearchParams();
-
 
   const getAllLocation = async () => {
     try {
@@ -42,38 +51,37 @@ const searchPage = () => {
     }
   };
 
-
-  const showEvent = async (url: string) => {
+  const getEvent = async (url: string) => {
     try {
       const response = await basicGetApi.get(`${url}`);
-
       const filteredData = response.data.result;
-      setFilterData(filteredData);
-      console.log("filterData", filterData);
+      console.log("Ini response: ", filteredData);
+      setFilterData(filteredData.events);
+      setTotalPage(filteredData.totalPages);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
+    const theUrl = `/search?${params.toString()}`;
+    getEvent(theUrl);
+  }, [params]);
+
+  useEffect(() => {
     getAllLocation();
+    const pageFromQuery = parseInt(params.get("page") || "1");
+    setCurrentPage(pageFromQuery);
   }, []);
 
   useEffect(() => {
-    const theUrl = `/search?${params.toString()}`;
-    showEvent(theUrl);
-  }, [params]); //Update data ketika query berubah
-
-  const dynamicQuery = (
-    key: string,
-    value: string,
-    key2?: string, //optional value
-    value2?: string //optional value
-  ) => {
     const searchParams = new URLSearchParams(params.toString());
-    console.log("ini search params:", searchParams);
-    console.log("iniserachparamsvalue: ", searchParams.values());
+    searchParams.set("page", currentPage.toString());
+    router.push(`/search?${searchParams.toString()}`);
+  }, [currentPage, params]); // Trigger when page or params change
 
+  const dynamicQuery = (key: string, value: string, condition?: string) => {
+    const searchParams = new URLSearchParams(params.toString());
     const valueUpdate = searchParams.get(key); //Ini value query yang sudah ada
 
     console.log("ini value update", valueUpdate);
@@ -83,7 +91,7 @@ const searchPage = () => {
     console.log("ini todate:", toDate);
     //Hapus value sebelumnya
 
-    if (value && key !== "pricemin" && key !== "pricemax") {
+    if (value && key !== "pricemin" && key !== "pricemax" && !condition) {
       if (valueUpdate) {
         // Jika query sudah ada, maka cek dan tambah value baru
         const newValuesUpdate = valueUpdate.split(",");
@@ -94,21 +102,6 @@ const searchPage = () => {
       } else {
         searchParams.set(key, value); // Tambah query dan value baru
       }
-    } else if (key === "pricemin" || key === "pricemax") {
-      //udah beres
-      if (pricemin) {
-        searchParams.set("pricemin", pricemin);
-      }
-      if (pricemax) {
-        searchParams.set("pricemax", pricemax);
-      } else {
-        if (!pricemin) {
-          searchParams.delete("pricemin");
-        }
-        if (!pricemax) {
-          searchParams.delete("pricemax");
-        }
-      }
     } else if (key === "startdate" || key === "enddate") {
       if (key === "startdate" && fromDate) {
         searchParams.set("startdate", fromDate);
@@ -116,95 +109,139 @@ const searchPage = () => {
       if (key === "enddate" && toDate) {
         searchParams.set("enddate", toDate);
       }
-    } else if (value === "") {
-      // Masih gabisa delete query yang ada
+    } else if (condition === "deleted") {
       if (valueUpdate) {
-        // const newValuesUpdate = valueUpdate
-        //   .split(",")
-        //   .filter((item: string) => item !== value);
-        // console.log("new valuessssss", newValuesUpdate);
-        // const newValue = newValuesUpdate.filter(
-        //   (item: string) => item !== value
-        // );
-        // console.log("new value", newValue);
-
-        const currentValues = searchParams.get(key)?.split(",") || []; // <<== GPT, dan masih blm bisa juga
-        const filteredValues = currentValues.filter((item) => item !== value); // Use the latest searchParams
+        const currentValues = searchParams.get(key)?.split(",") || [];
+        console.log("Ini current value", currentValues);
+        const filteredValues = currentValues.filter(
+          (values: any) => values !== value
+        );
         console.log("filteredValues", filteredValues);
 
-        if (filteredValues.length >= 0) {
+        if (filteredValues.length > 0) {
           searchParams.set(key, filteredValues.join(","));
         } else {
           searchParams.delete(key);
         }
       }
-
     }
     router.push(`?${searchParams.toString()}`);
   };
 
-  const handlingFilter = (id: string, event: any) => {
-    const isChecked = event.target.checked;
-    if (isChecked) {
-      dynamicQuery(id, event.target.value);
-    } else if (!isChecked) {
-      dynamicQuery(id, "");
+  //Handle checkbox filter
+  const handlingFilter = (id: string, e: any) => {
+    if (e.target.checked) {
+      dynamicQuery(id, e.target.value);
+    } else {
+      dynamicQuery(id, e.target.value, "deleted");
+      console.log("deleted");
     }
   };
 
-  const handlePriceFilter = (e: any) => {
-    if (e.target.name === "pricemin") {
-      setPricemin(e.target.value);
-      console.log("pricemin", pricemin);
-    } else {
-      setPricemax(e.target.value);
+  const isChecked = (key: string, value: string) => {
+    const values = params.get(key)?.split(",") || [];
+    if (values.includes(value)) {
+      return true;
     }
+    return false;
+  };
+
+  //Price
+  const handlePriceFilterPriceMin = (e: any) => {
+    setPricemin(e.target.value);
+  };
+
+  const handlePriceFilterPriceMax = (e: any) => {
+    setPricemax(e.target.value);
   };
 
   const setPrice = () => {
-    console.log("pricemin", pricemin);
-    console.log("pricemax", pricemax);
-    dynamicQuery("pricemin", pricemin);
-    dynamicQuery("pricemax", pricemax);
+    if (Number(pricemin) > Number(pricemax)) {
+      alert("Price From should not be greater than Price To.");
+      return;
+    }
+    const searchParams = new URLSearchParams(params.toString());
+
+    if (pricemin) {
+      searchParams.set("pricemin", pricemin);
+    } else {
+      searchParams.delete("pricemin");
+    }
+
+    if (pricemax) {
+      searchParams.set("pricemax", pricemax);
+    } else {
+      searchParams.delete("pricemax");
+    }
+
+    router.push(`?${searchParams.toString()}`);
   };
 
-  const handlingDateFilter = (e: any) => {
-    if (e.target.name === "startdate") {
-      setFromDate(e.target.value);
-      console.log("fromdate", fromDate);
-    } else {
-      setToDate(e.target.value);
-    }
+  //Date
+  const handlingDateFilterFrom = (e: any) => {
+    setFromDate(e.target.value);
+  };
+
+  const handlingDateFilterTo = (e: any) => {
+    setToDate(e.target.value);
   };
 
   const setDate = () => {
-    dynamicQuery("startdate", fromDate);
-    dynamicQuery("enddate", toDate);
+    if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+      alert("Start Date should not be later than End Date.");
+      return;
+    }
+    const searchParams = new URLSearchParams(params.toString());
+    if (fromDate) {
+      searchParams.set("startdate", fromDate);
+    } else {
+      searchParams.delete("startdate");
+    }
+
+    if (toDate) {
+      searchParams.set("enddate", toDate);
+    } else {
+      searchParams.delete("enddate");
+    }
+
+    router.push(`?${searchParams.toString()}`);
   };
 
-  useEffect(() => {
-    if (fromDate || toDate) {
-      dynamicQuery("startdate", fromDate);
-      dynamicQuery("enddate", toDate);
+  //Searchbar
+  const handleSearch = (e: any) => {
+    setSearchWord(e.target.value);
+  };
+
+  const setSearch = () => {
+    const searchParams = new URLSearchParams(params.toString());
+    if (searchWord) {
+      searchParams.set("keyword", searchWord);
+    } else {
+      searchParams.delete("keyword");
     }
-  }, [fromDate, toDate]);
+  };
+
+  console.log("Ini filterdata:", filterData);
 
   return (
-    <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-10 border border-red-500">
+    <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-10">
       <div>
         {" "}
-        <Input
-          placeholder="Search event here.."
-          startContent={<IoSearchOutline />}
-          type="text"
-          name="search"
-          className="border-none w-full active:border-blue-600"
-        />
+        <form onSubmit={setSearch}>
+          <Input
+            placeholder="Search event here.."
+            startContent={<IoSearchOutline />}
+            type="text"
+            name="keyword"
+            className="border-none w-full active:border-blue-600"
+            onChange={(e) => handleSearch(e)}
+          />
+        </form>
       </div>
       <div className="container lg:grid lg:grid-cols-4">
         <div className="filter w-full p-4">
           <div>
-            <h1>Filter</h1>
+            <h1 className="text-xl font-bold">Filter</h1>
           </div>
           <div>
             <Accordion type="multiple">
@@ -213,12 +250,12 @@ const searchPage = () => {
                 <AccordionContent>
                   <div className="flex gap-2 justify-between items-center">
                     <label>Music</label>
-
                     <input
                       type="checkbox"
                       id="category"
                       name="Music"
                       value="Music"
+                      checked={isChecked("cat", "Music")}
                       onChange={(e) => handlingFilter("cat", e)}
                     />
                   </div>
@@ -229,6 +266,7 @@ const searchPage = () => {
                       id="category"
                       name="Festival"
                       value="Festival"
+                      checked={isChecked("cat", "Festival")}
                       onChange={(e) => handlingFilter("cat", e)}
                     />
                   </div>
@@ -239,6 +277,7 @@ const searchPage = () => {
                       id="category"
                       name="Food"
                       value="Food"
+                      checked={isChecked("cat", "Food")}
                       onChange={(e) => handlingFilter("cat", e)}
                     />
                   </div>
@@ -249,9 +288,9 @@ const searchPage = () => {
                       id="category"
                       name="International"
                       value="International"
+                      checked={isChecked("cat", "International")}
                       onChange={(e) => handlingFilter("cat", e)}
                     />
-
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -268,10 +307,9 @@ const searchPage = () => {
                               type="checkbox"
                               id="location"
                               name={`${value.city_name}`}
-
                               value={`${value.city_name}`}
+                              checked={isChecked("city", `${value.city_name}`)}
                               onChange={(e) => handlingFilter("city", e)}
-
                             />
                           </div>
                         );
@@ -286,28 +324,24 @@ const searchPage = () => {
                     <input
                       type="number"
                       id="price"
-
                       name="pricemin"
                       className="border rounded-sm p-2 shadow-sm"
                       placeholder="Price from Rp..."
                       value={pricemin}
-                      onChange={(e) => handlePriceFilter(e)}
-
+                      onChange={(e) => handlePriceFilterPriceMin(e)}
                     />{" "}
                     -
                     <input
                       type="number"
                       id="price"
-
                       name="pricemax"
                       className="border rounded-sm p-2 shadow-sm"
                       placeholder="Price to Rp..."
                       value={pricemax}
-                      onChange={(e) => handlePriceFilter(e)}
+                      onChange={(e) => handlePriceFilterPriceMax(e)}
                     />
                   </div>
                   <Button onClick={setPrice}>Set Price</Button>
-
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="date">
@@ -317,35 +351,29 @@ const searchPage = () => {
                     <input
                       type="date"
                       id="price"
-
                       name="startdate"
                       className="border rounded-sm p-2  shadow-sm"
                       placeholder="Price from Rp..."
-                      onChange={(e) => handlingDateFilter(e)}
-
+                      onChange={(e) => handlingDateFilterFrom(e)}
                     />
                     <input
                       type="date"
                       id="price"
-
                       name="enddate"
                       className="border rounded-sm p-2  shadow-sm"
                       placeholder="Price to Rp..."
-                      onChange={(e) => handlingDateFilter(e)}
+                      onChange={(e) => handlingDateFilterTo(e)}
                     />
                   </div>
                   <Button onClick={setDate}>Set Date</Button>
-
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
           </div>
         </div>
         <div className="product w-full p-4 col-span-3">
-          <div className="flex gap-1 flex-wrap justify-between">
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filterData && filterData.length > 0 ? (
-
               filterData.map((value: any, index: number) => {
                 return (
                   <EventCard
@@ -353,26 +381,85 @@ const searchPage = () => {
                     eventTitle={value.title}
                     eventImg={value.imgEvent}
                     eventStartDate={value.startDate}
-                    eventPrice={value.event_price}
+                    eventPrice={
+                      (filterData.length > 0
+                        ? Math.min(
+                            ...filterData[index].ticket_types.map(
+                              (ticket: any) => ticket.price
+                            )
+                          )
+                        : 0) as any
+                    }
                     eventOrganizerName={value.organizer.organizer_name}
-                    eventOrganizerProfile={value.organizer.organizer_profile}
+                    eventOrganizerProfile={value.organizer.organizer_logo}
                     onClick={() => {
                       router.push(`/event/${value.title}`);
                     }}
-                    size="w-1/4"
+                    size="w-full"
                   />
                 );
               })
             ) : (
-              <div className="w-full h-full border border-purple-600">
-                No Data Founded.
+              <div className="w-full h-full flex justify-center items-center p-10">
+                <h1 className="text-xl font-bold">No Data Founded.</h1>
               </div>
             )}
+          </div>
+          <div className="py-6 lg:py-8 flex justify-center items-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => {
+                      if (currentPage === 1) {
+                        return;
+                      } else {
+                        setCurrentPage(currentPage - 1); // Decrease the page
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
 
+                {Array.from({ length: totalPage }, (_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => {
+                        setCurrentPage(index + 1);
+                      }}
+                      isActive={currentPage === index + 1}
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                {totalPage > 5 && currentPage < totalPage - 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => {
+                      if (currentPage === totalPage) {
+                        return;
+                      } else {
+                        setCurrentPage(currentPage + 1); // Increase the page
+                      }
+
+                      console.log("Ini current page :", currentPage);
+                      console.log("Ini total page :", totalPage);
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       </div>
-      <div></div>
     </div>
   );
 };
