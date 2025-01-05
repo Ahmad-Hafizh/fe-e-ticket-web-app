@@ -30,10 +30,14 @@ const EventCard: React.FC<ICardEvent> = ({
         src={eventImg}
         className="rounded-tr-lg rounded-tl-lg h-36 md:h-40 lg:h-56"
       />
-      <div className="py-3 px-5 md:py-4 ">
+      <div className="py-0 lg:py-2 px-5 md:py-4">
         <h1 className="text-md md:text-lg font-extrabold">{eventTitle}</h1>
-        <h1 className="text-sm font-medium text-gray-400">{eventStartDate}</h1>
-        <h1 className="text-sm font-medium">{eventPrice}</h1>
+        <div className="flex justify-between items-center gap-3">
+          <h1 className="text-sm font-medium text-gray-600">
+            {eventStartDate.slice(0, 10)}
+          </h1>
+          <h1 className="text-sm font-bold">IDR {eventPrice}</h1>
+        </div>
       </div>
       <hr></hr>
       <div className="flex gap-3 items-center py-3 px-5 ">

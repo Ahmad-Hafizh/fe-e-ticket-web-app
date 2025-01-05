@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 interface IUser {
+  pfp_url: any;
   name: string;
   email: string;
   role: string;
@@ -8,14 +9,15 @@ interface IUser {
 }
 
 const initalUser: IUser = {
-  name: '',
-  email: '',
-  role: '',
+  name: "",
+  email: "",
+  role: "",
   isVerified: false,
+  pfp_url: "",
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState: initalUser,
   reducers: {
     signIn: (initialState, action) => {

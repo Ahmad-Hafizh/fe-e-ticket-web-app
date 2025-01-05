@@ -1,41 +1,48 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import EventCard from '@/components/global-components/EventCard';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { basicGetApi } from '../../app/config/axios';
-import { useEffect, useState } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import RoundedCard from './RoundedCard';
+"use client";
+import EventCard from "@/components/global-components/EventCard";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { basicGetApi } from "../../app/config/axios";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import RoundedCard from "./RoundedCard";
+import { set } from "zod";
 
 interface IEventCollection {
-  apicall: string;
-  label: string;
+  eventDataFromMain: any[];
 }
 
-const CarouselRounded: React.FC<IEventCollection> = ({ apicall, label }) => {
-  const [eventData, setEventData] = useState<any | null>(null);
+const CarouselRounded: React.FC<IEventCollection> = ({ eventDataFromMain }) => {
+  const [eventData, setEventData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any | null>(null);
 
-  const getData = async () => {
-    try {
-      setLoading(true);
-      const response = await basicGetApi.get(`${apicall}`);
-      setEventData(response.data.result);
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-    }
-  };
+  // const getData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await basicGetApi.get(`${apicall}`);
+  //     setEventData(response.data.result);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setError(error);
+  //   }
+  // };
 
   useEffect(() => {
-    getData();
+    setEventData(eventDataFromMain);
+    setLoading(false);
   }, []);
 
   if (loading) {
     return (
       <div className="flex flex-col">
-        <h1 className="text-2xl font-bold pb-5">{label}</h1>
+        <h1 className="text-2xl font-bold pb-5">Popular Creator</h1>
         <div className="w-full ">
           <Carousel className="w-full relative">
             <CarouselContent>
@@ -98,7 +105,7 @@ const CarouselRounded: React.FC<IEventCollection> = ({ apicall, label }) => {
             </CarouselContent>
             <div className="opacity-0 hover:opacity-100 w-full h-full absolute top-0 transition-opacity">
               <CarouselPrevious className="left-3" />
-              <CarouselNext className="right-3 md:right-9" /> 
+              <CarouselNext className="right-3 md:right-9" />
             </div>
           </Carousel>
         </div>
@@ -112,14 +119,20 @@ const CarouselRounded: React.FC<IEventCollection> = ({ apicall, label }) => {
 
   return (
     <div className="flex flex-col py-0">
-      <h1 className="text-2xl font-bold pb-5 pt-0">{label}</h1>
+      <h1 className="text-2xl font-bold pb-7 pt-0">Popular Organizer</h1>
       <div className="w-full ">
         <Carousel className="w-full relative">
           <CarouselContent>
             {eventData.map((value: any, index: number) => {
               return (
-                <CarouselItem key={index} className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4">
-                  <RoundedCard title={value.title} pict={value.imgEvent} />
+                <CarouselItem
+                  key={index}
+                  className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4"
+                >
+                  <RoundedCard
+                    title={value.organizer_name}
+                    pict={value.organizer_logo}
+                  />
                   {/**Perlu include di backend */}
                 </CarouselItem>
               );
