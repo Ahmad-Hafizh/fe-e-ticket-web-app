@@ -95,10 +95,12 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
 
   const fetchByLocation = async (location: string) => {
     try {
+
       const response = await basicGetApi.get(`/search?city=${location}&page=1`);
       setEventData(response.data.result.events);
       console.log("Inii response: ", response);
       console.log("Ini evendata:", eventData);
+
     } catch (error) {
       console.log(error);
     }

@@ -25,6 +25,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { useDebounce } from "use-debounce";
 import Paginations from "./component/pagination";
 
+
 const searchPage = () => {
   const [allLocation, setAllLocation] = useState<any>([]);
   const [filterData, setFilterData] = useState<any>([]);
@@ -224,6 +225,7 @@ const searchPage = () => {
   console.log("Ini filterdata:", filterData);
 
   return (
+
     <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-10">
       <div>
         {" "}
@@ -237,6 +239,7 @@ const searchPage = () => {
             onChange={(e) => handleSearch(e)}
           />
         </form>
+
       </div>
       <div className="container lg:grid lg:grid-cols-4">
         <div className="filter w-full p-4">
