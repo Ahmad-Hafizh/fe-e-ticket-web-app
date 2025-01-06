@@ -25,6 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { basicGetApi } from "@/app/config/axios";
+import { useRouter, useSearchParams } from "next/navigation";
+import { headers } from "next/headers";
 
 const formSchema = z.object({
   reviewScore: z.string().min(1, {
@@ -37,6 +39,7 @@ const formSchema = z.object({
 });
 
 export default function ReviewSubmit({ eventId }: { eventId: string }) {
+  const route = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,19 +53,24 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     const payLoad = {
-      userId: 17,
       eventId: parseInt(eventId),
       reviewScore: values.reviewScore,
       reviewContent: values.reviewContent,
       reviewImage: values.reviewImage,
     };
     const callApi = async () => {
-      const response = await basicGetApi.post("/review", payLoad);
+      const response = await basicGetApi.post("/review", payLoad, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NCwiZW1haWwiOiJyYWhldzQ2MjMzQGdob2xhci5jb20iLCJyb2xlIjoidXNlciIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE3MzYxNTc2NDd9.Qm8VEUswlL3Izwh6NaURgFVSqyLZvVkHtl0oAZUP6og`,
+        },
+      });
+      console.log(response);
     };
     callApi();
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    window.location.reload();
   }
 
   return (
@@ -105,7 +113,7 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
           />
         </div>
 
-        <div className="flex flex-col items-start gap-3">
+        {/* <div className="flex flex-col items-start gap-3">
           <h1 className="font-bold">Show us the fun pict:</h1>
           <FormField
             control={form.control}
@@ -119,7 +127,7 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
               </FormItem>
             )}
           />
-        </div>
+        </div> */}
         <div className="flex flex-col items-start gap-3">
           <h1 className="font-bold">How excited is the show?</h1>
           <FormField
