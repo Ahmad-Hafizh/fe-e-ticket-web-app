@@ -46,13 +46,14 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
   const [finalPrice, setFinalPrice] = useState<any>(0);
   const [discount, setDiscount] = useState<any>(0);
   const [error, setError] = useState<any | null>(null);
+  const [coupon, setCoupon] = useState<boolean>(false);
 
   const user = useAppSelector((state) => state.userReducer);
 
   // if (!user.name) {
   //   route.push("/sign-in");
   // }
-  console.log("ini user:", user);
+  // console.log("ini user:", user);
 
   useEffect(() => {
     const getData = async () => {
@@ -61,6 +62,9 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
         const transactionData = sessionStorage.getItem("transaction-data")
           ? JSON.parse(sessionStorage.getItem("transaction-data")!)
           : null;
+        if (!transactionData) {
+          route.push("/");
+        }
         setEventData(transactionData.event);
         setTransactionDetailData(transactionData.ticket.data);
         console.log("Ini transactionData: ", transactionData.ticket.data);
@@ -74,6 +78,8 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
     getData();
   }, []);
 
+  console.log("ini event data:", eventData);
+  //tambah kondisi untuk menyertakan pakai kupon apa enggak?
   useEffect(() => {
     if (transactionDetailData) {
       let finalPrice = 0;
@@ -82,12 +88,27 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
       transactionDetailData.forEach((value: any) => {
         pretotal += value.subtotal;
       });
-      setSubtotal(pretotal);
-      finalPrice = pretotal + platformFee - discount;
-      setFinalPrice(finalPrice);
-    }
-  }, [transactionDetailData]);
 
+      setSubtotal(pretotal);
+      if (pretotal === 0) {
+        finalPrice = pretotal + 0 - 0;
+        setFinalPrice(finalPrice);
+      } else {
+        finalPrice = pretotal + platformFee - discount;
+        setFinalPrice(finalPrice);
+      }
+    }
+  }, [transactionDetailData, discount]);
+
+  let isCouponValid = true;
+  // const now = new Date();
+  // if (
+  //   eventData?.organizer_coupon?.quantity > 0 &&
+  //   new Date(eventData.organizer_coupon?.start_date) <= now &&
+  //   new Date(eventData.organizer_coupon?.expired_date) > now
+  // ) {
+  //   isCouponValid = true;
+  // }
   //form validation
   const formSchema = z.object({
     coupon: z.string().optional(),
@@ -134,7 +155,8 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
         transactions: payloadTransaction?.data,
       };
 
-      console.log("payload siap kirim:", payloadUltimate.event.event_id);
+      const userData = localStorage.getItem("tkn");
+      console.log("payload siap kirim:", payloadUltimate);
       try {
         const send = await basicGetApi.post(
           `/transaction/${payloadUltimate.event.event_id}`,
@@ -143,18 +165,25 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
           },
           {
             headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NCwiZW1haWwiOiJyYWhldzQ2MjMzQGdob2xhci5jb20iLCJyb2xlIjoidXNlciIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE3MzYxNTc2NDd9.Qm8VEUswlL3Izwh6NaURgFVSqyLZvVkHtl0oAZUP6og",
+              Authorization: `Bearer ${userData}`,
             },
           }
         );
         console.log("Ini send:", send);
-        transactionData.transaction_id = send.data.result.transaction_id;
+        transactionData.transaction = {
+          transaction_id: send.data.result.transaction_id,
+          payment_method: values.payment,
+          total: finalPrice,
+        };
+        if (coupon) {
+          transactionData.coupon = true;
+        }
         sessionStorage.setItem(
           "transaction-data",
           JSON.stringify(transactionData)
         );
-        route.push(`/transaction/confirm/${send.data.result.transaction_id}`);
+        // route.push(`/transaction/confirm/${send.data.result.transaction_id}`);
+        route.push(`/transaction/payment`);
       } catch (error) {
         console.log("Ini error", error);
       }
@@ -291,7 +320,7 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                   </div>
                   <div className="flex justify-between">
                     <h1>Platform Fee</h1>
-                    <h1>Rp. 50</h1>
+                    <h1>Rp. {finalPrice === 0 ? "0" : 50}</h1>
                   </div>
                   <div className="flex justify-between">
                     <h1>Discount Coupon</h1>
@@ -302,13 +331,41 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                     <h1>Rp. {finalPrice}</h1>
                   </div>
                   <div className="flex flex-col py-2 gap-2">
-                    <h1>Input your coupon</h1>
+                    {eventData?.organizer_coupon?.organizer_coupon_code ? (
+                      <h1 className="text-lg font-bold">Choose your coupon</h1>
+                    ) : (
+                      <h1 className="text-lg font-bold">No coupon available</h1>
+                    )}
+
                     <div className="flex gap-3 justify-between items-center h-full ">
-                      <input
-                        type="text"
-                        className="h-8 w-full border rounded-lg shadow-sm p-2"
-                      />
-                      <Button type="button">Input coupon</Button>
+                      {isCouponValid && (
+                        <Card className="w-full h-fit px-5 py-3 flex justify-between items-center">
+                          <div className="flex flex-col">
+                            <h1 className="font-bold">
+                              Code:{" "}
+                              {eventData.organizer_coupon.organizer_coupon_code}
+                            </h1>
+                            <h1 className="text-sm">
+                              Disc: Rp.{eventData.organizer_coupon.discount}
+                            </h1>
+                            <h1 className="text-sm">
+                              Only {eventData.organizer_coupon.quantity} left
+                            </h1>
+                          </div>
+                          <input
+                            type="radio"
+                            value={eventData.organizer_coupon.discount}
+                            onChange={(e) => {
+                              setDiscount(parseInt(e.target.value));
+                              if (e.target.value) {
+                                setCoupon(true);
+                              } else {
+                                setCoupon(false);
+                              }
+                            }}
+                          />
+                        </Card>
+                      )}
                     </div>
                     <Accordion type="single" collapsible defaultValue="item-1">
                       <AccordionItem value="item-1">
