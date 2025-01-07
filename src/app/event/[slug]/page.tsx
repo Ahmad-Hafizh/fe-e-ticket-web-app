@@ -17,6 +17,8 @@ import ReviewSubmit from "@/components/views/event/message";
 // import axios from 'axios';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { user } from "@nextui-org/theme";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 interface IEventDetailPage {
   params: { slug: string };
@@ -33,6 +35,37 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
   const [ticketQuantities, setTicketQuantities] = useState<[]>([]);
   const [totalTicketQuantity, setTotalTicketQuantity] = useState<number>(0);
   const [totalTicketprice, setTotalTicketPrice] = useState<number>(0);
+
+  const user = useAppSelector((state) => state.userReducer);
+
+  let isCustomer;
+  if (eventData) {
+    const filteredCustomers = eventData.customer.filter(
+      (cust: any) => cust.email === user.email
+    );
+    isCustomer = filteredCustomers.length > 0;
+  }
+
+  let isFinished;
+  if (eventData) {
+    const nowdate = Date.now();
+    const eventDate = new Date(eventData.endDate).getTime();
+    if (eventDate < nowdate) {
+      isFinished = true;
+    }
+  }
+
+  let isReviewed = false;
+  if (eventData) {
+    const reviewed = eventData.review.forEach((value: any) => {
+      console.log("Ini value.user.email: ", value.user.email);
+      console.log("Ini user.email: ", user.email);
+      if (value.user.email === user.email) {
+        isReviewed = true;
+        return;
+      }
+    });
+  }
 
   const updateTicketQuantity = (ticket: number, quantity: number) => {
     const updatedQuantities: any = [...ticketQuantities];
@@ -73,6 +106,8 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
     getData();
   }, []);
 
+  console.log("Event Data", eventData);
+
   if (loading) {
     return (
       <>
@@ -80,9 +115,16 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
           <div className="bg-white lg:grid lg:grid-cols-[2fr_1fr]">
             <div className="lg:flex lg:flex-col lg:items-end lg:justify-end">
               <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 pt-10 lg:pb-4 pb-0 flex flex-col gap-5">
-                <Skeleton className="w-full h-30 rounded-lg shadow-sm lg:mb-3" />
-                <Skeleton className="w-20 h-6 rounded-lg shadow-sm lg:mb-3" />
+                <Skeleton className="w-full h-96 rounded-lg shadow-sm lg:mb-3" />
+                <div className="flex flex-col gap-3">
+                  <Skeleton className="w-20 h-6 rounded-lg shadow-sm lg:mb-3" />
+                  <Skeleton className="w-36 h-6 rounded-lg shadow-sm lg:mb-3" />
+                  <Skeleton className="w-36 h-6 rounded-lg shadow-sm lg:mb-3" />
+                </div>
               </div>
+            </div>
+            <div className=" p-8">
+              <Skeleton className="w-full rounded-lg h-full" />
             </div>
           </div>
         </div>
@@ -131,6 +173,14 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
         <div className="bg-white lg:grid lg:grid-cols-[2fr_1fr] relative ">
           <div className="lg:flex lg:flex-col lg:items-end lg:justify-end">
             <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 pt-10 lg:pb-4 pb-0 flex flex-col gap-5">
+              {loading ? (
+                <img
+                  src={eventData.imgEvent}
+                  className="w-full rounded-lg shadow-sm lg:mb-3"
+                />
+              ) : (
+                <Skeleton className="w-full rounded-lg shadow-sm lg:mb-3" />
+              )}
               <img
                 src={eventData.imgEvent}
                 className="w-full rounded-lg shadow-sm lg:mb-3"
@@ -150,7 +200,7 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                 <h3 className="text-sm md:text-lg w-full flex items-center gap-1">
                   <MdDateRange />{" "}
                   <span className="font-bold hidden md:inline">Date :</span>{" "}
-                  {eventData.startDate.slice(0, 10)} --{" "}
+                  {eventData.startDate.slice(0, 10)} -{" "}
                   {eventData.endDate.slice(0, 10)}
                 </h3>
               ) : (
@@ -196,27 +246,44 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                     >
                       <div>
                         <h1 className="text-lg font-bold">{ticket.types}</h1>
-                        <h2 className="text-md">Price: IDR.{ticket.price}</h2>
+                        {ticket.price === 0 ? (
+                          <h2 className="text-md">Price: FREE</h2>
+                        ) : (
+                          <h2 className="text-md">Price: IDR.{ticket.price}</h2>
+                        )}
+                        {ticket.quantity_available === 0 ? (
+                          <></>
+                        ) : (
+                          <h2 className="text-sm">
+                            Only {ticket.quantity_available} left.
+                          </h2>
+                        )}
                       </div>
                       <div className="flex gap-2 items-center">
-                        <h2 className="text-md">Quantity</h2>
-                        <select
-                          className="p-2"
-                          onChange={(e) =>
-                            updateTicketQuantity(
-                              index,
-                              parseInt(e.target.value)
-                            )
-                          }
-                          value={ticketQuantities[index]}
-                        >
-                          {[...Array(8).keys()].map((num) => (
-                            <option key={num} value={num}>
-                              {num}
-                            </option>
-                          ))}
-                          {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
-                        </select>
+                        {ticket.quantity_available === 0 ? (
+                          <h2 className="text-md">SOLD</h2>
+                        ) : (
+                          <>
+                            <h2 className="text-md">Quantity</h2>
+                            <select
+                              className="p-2"
+                              onChange={(e) =>
+                                updateTicketQuantity(
+                                  index,
+                                  parseInt(e.target.value)
+                                )
+                              }
+                              value={ticketQuantities[index]}
+                            >
+                              {[...Array(8).keys()].map((num) => (
+                                <option key={num} value={num}>
+                                  {num}
+                                </option>
+                              ))}
+                              {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
+                            </select>
+                          </>
+                        )}
                         {/* <Button>Buy Ticket</Button> */}
                       </div>
                     </div>
@@ -263,64 +330,73 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
             </div>
             <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-5 flex flex-col">
               <h1 className="text-xl font-bold">Organized by</h1>
-              <div className="ticket flex gap-2 justify-between py-2 my-3 items-center bg-gray-50 rounded-lg shadow-md px-3">
+              <div className="ticket flex gap-2 py-2 my-3 items-center justify-start bg-gray-50 rounded-lg shadow-md px-3">
                 <img
-                  src={eventData.organizer_id}
+                  src={eventData.organizer.organizer_logo}
                   className="w-10 h-10 rounded-full"
                 />
                 <div>
-                  <h1 className="text-md font-bold">Organizer name</h1>
-                  <h1 className="text-sm">organizer@email.com</h1>
+                  <h1 className="text-md font-bold">
+                    {eventData.organizer.organizer_name}
+                  </h1>
+                  <h1 className="text-sm">
+                    {eventData.organizer.organizer_email}
+                  </h1>
                 </div>
-                <Button>Contact</Button>
               </div>
             </div>
-            <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-3 flex flex-col gap-6">
-              <h1 className="text-xl font-bold">
-                What do you think of this event?
-              </h1>
-              <div className="ticket flex flex-col justify-between p-5 lg:p-10 items-center bg-gray-100 rounded-lg shadow-md">
-                <ReviewSubmit eventId={eventData.event_id} />
+            {isCustomer && !isReviewed ? (
+              <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-3 flex flex-col gap-6">
+                <h1 className="text-xl font-bold">
+                  What do you think of this event?
+                </h1>
+                <div className="ticket flex flex-col justify-between p-5 lg:p-10 items-center bg-gray-100 rounded-lg shadow-md">
+                  <ReviewSubmit eventId={eventData.event_id} />
+                </div>
               </div>
-            </div>
-            <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-5 flex flex-col">
-              <h1 className="text-xl font-bold my-3">
-                What they say about this event..
-              </h1>
-              <div className="ticket flex flex-col justify-between items-center gap-6">
-                {eventData.review.map((value: any, index: number) => {
-                  return (
-                    <div
-                      className="bg-gray-200 rounded-lg shadow-md px-5 pt-4 w-full flex flex-col gap-3"
-                      key={index}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="avatar flex items-center gap-3">
-                          <img
-                            src={value.user.pfp_url}
-                            className="rounded-full h-10 w-10"
-                          />
-                          <h1 className="text-lg font-bold">
-                            {value.user.name}
-                          </h1>
+            ) : (
+              <></>
+            )}
+            {eventData.review[0] && (
+              <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-5 flex flex-col">
+                <h1 className="text-xl font-bold my-3">
+                  What they say about this event..
+                </h1>
+                <div className="ticket flex flex-col justify-between items-center gap-6">
+                  {eventData.review.map((value: any, index: number) => {
+                    return (
+                      <div
+                        className="bg-gray-200 rounded-lg shadow-md px-5 pt-4 w-full flex flex-col gap-3"
+                        key={index}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="avatar flex items-center gap-3">
+                            <img
+                              src={value.user.pfp_url}
+                              className="rounded-full h-10 w-10"
+                            />
+                            <h1 className="text-lg font-bold">
+                              {value.user.name}
+                            </h1>
+                          </div>
+                          <div className="score">
+                            <h1 className="font-bold flex items-center gap-1">
+                              {value.score} <FaStar />
+                            </h1>
+                          </div>
                         </div>
-                        <div className="score">
-                          <h1 className="font-bold flex items-center gap-1">
-                            {value.score} <FaStar />
-                          </h1>
+                        <div className="paragraph">
+                          <p>{value.review_text}</p>
+                        </div>
+                        <div className="review image">
+                          <p>{value.review_img}</p>
                         </div>
                       </div>
-                      <div className="paragraph">
-                        <p>{value.review_text}</p>
-                      </div>
-                      <div className="review image">
-                        <p>{value.review_img}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="w-full h-full relative ">
             <div className="lg:block hidden sticky top-[10%]">
@@ -335,27 +411,49 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
                       >
                         <div>
                           <h1 className="text-lg font-bold">{ticket.types}</h1>
-                          <h2 className="text-md">Price: IDR.{ticket.price}</h2>
+                          {ticket.price === 0 ? (
+                            <h2 className="text-md">Price: FREE</h2>
+                          ) : (
+                            <h2 className="text-md">
+                              Price: IDR.{ticket.price}
+                            </h2>
+                          )}
+                          {ticket.quantity_available === 0 ? (
+                            <></>
+                          ) : (
+                            <h2 className="text-sm">
+                              Only {ticket.quantity_available} left.
+                            </h2>
+                          )}
                         </div>
                         <div className="flex gap-2 items-center">
-                          <h2 className="text-md">Quantity</h2>
-                          <select
-                            className="p-2"
-                            onChange={(e) =>
-                              updateTicketQuantity(
-                                index,
-                                parseInt(e.target.value)
-                              )
-                            }
-                            value={ticketQuantities[index]}
-                          >
-                            {[...Array(8).keys()].map((num) => (
-                              <option key={num} value={num}>
-                                {num}
-                              </option>
-                            ))}
-                            {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
-                          </select>
+                          {ticket.quantity_available === 0 ? (
+                            <h2 className="text-md font-bold text-red-700">
+                              SOLD
+                            </h2>
+                          ) : (
+                            <>
+                              <h2 className="text-md">Quantity</h2>
+                              <select
+                                className="p-2"
+                                onChange={(e) =>
+                                  updateTicketQuantity(
+                                    index,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                                value={ticketQuantities[index]}
+                              >
+                                {[...Array(8).keys()].map((num) => (
+                                  <option key={num} value={num}>
+                                    {num}
+                                  </option>
+                                ))}
+                                {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
+                              </select>
+                            </>
+                          )}
+
                           {/* <Button>Buy Ticket</Button> */}
                         </div>
                       </div>

@@ -134,12 +134,29 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
         transactions: payloadTransaction?.data,
       };
 
-      console.log("payload siap kirim:", payloadUltimate);
+      console.log("payload siap kirim:", payloadUltimate.event.event_id);
       try {
-        await basicGetApi.post("/transaction", payloadUltimate);
-        route.push("/transaction/confirm");
+        const send = await basicGetApi.post(
+          `/transaction/${payloadUltimate.event.event_id}`,
+          {
+            payloadUltimate,
+          },
+          {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NCwiZW1haWwiOiJyYWhldzQ2MjMzQGdob2xhci5jb20iLCJyb2xlIjoidXNlciIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE3MzYxNTc2NDd9.Qm8VEUswlL3Izwh6NaURgFVSqyLZvVkHtl0oAZUP6og",
+            },
+          }
+        );
+        console.log("Ini send:", send);
+        transactionData.transaction_id = send.data.result.transaction_id;
+        sessionStorage.setItem(
+          "transaction-data",
+          JSON.stringify(transactionData)
+        );
+        route.push(`/transaction/confirm/${send.data.result.transaction_id}`);
       } catch (error) {
-        console.log(error);
+        console.log("Ini error", error);
       }
     }
   }
@@ -164,26 +181,29 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                   </div>
                   <div className="event details flex flex-col gap-3">
                     <h1 className="font-bold text-2xl">{eventData.title}</h1>
-                    <div className="flex-col flex text-lg md:text-xl justify-center gap-2">
-                      <h1 className="flex gap-3">
+                    <div className="flex-col flex text-md md:text-xl justify-center gap-2">
+                      <h1 className="flex gap-3 items-center">
                         {" "}
                         <IoLocationOutline />
                         {eventData.event_location.address_name}{" "}
                         {eventData.event_location.address}
                       </h1>
-                      <h1 className="flex gap-3">
+                      <h1 className="flex gap-3 items-center">
                         {" "}
                         <IoMdTime />
-                        {eventData.startTime} - {eventData.endTime}
+                        {eventData.startTime} - {eventData.endTime}{" "}
+                        {eventData.timezone}
                       </h1>
                       {eventData.endDate ? (
-                        <h1 className="flex gap-3">
+                        <h1 className="flex gap-3 items-center">
                           {" "}
-                          <MdDateRange /> {eventData.startDate} -{" "}
-                          {eventData.endDate} {eventData.timezone}
+                          <MdDateRange /> {eventData.startDate.slice(
+                            0,
+                            10
+                          )} - {eventData.endDate.slice(0, 10)}
                         </h1>
                       ) : (
-                        <h1 className="flex gap-3">
+                        <h1 className="flex gap-3 items-center">
                           {" "}
                           <MdDateRange /> {eventData.startDate}{" "}
                           {eventData.timezone}
@@ -195,29 +215,35 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                 <div className="price flex flex-col gap-2">
                   <h1 className="font-bold text-lg">Your Order</h1>
                   <div className="flex flex-col">
-                    <div className="ticket w-full flex justify-between text-base py-2 border-t border-b lg:px-7">
-                      <div>
+                    <div className="ticket w-full grid grid-cols-3 text-base py-3 border-t border-b lg:px-10">
+                      <div className="w-full col-span-1 place-items-start">
                         <h1>Ticket Types</h1>
                       </div>
-                      <div>
+                      <div className="w-full col-span-1 place-items-center">
                         <h1>Quantity</h1>
                       </div>
-                      <div>
+                      <div className="w-full col-span-1 place-items-end">
                         <h1>Price</h1>
                       </div>
                     </div>
-                    <div className="ticket w-full flex flex-col justify-between text-base py-2 lg:px-7">
+                    <div className="ticket w-full grid grid-cols-3 text-base py-2 lg:px-10">
                       {transactionDetailData.length > 0 ? (
                         transactionDetailData.map(
                           (value: any, index: number) => {
                             return (
                               <div
-                                className="w-full flex justify-between"
+                                className="w-full col-span-3 grid grid-cols-3 py-2"
                                 key={index}
                               >
-                                <h1>{value?.types}</h1>
-                                <h1>{value?.quantityBought}</h1>
-                                <h1>{value?.price}</h1>
+                                <h1 className="flex items-center justify-start col-span-">
+                                  {value?.types}
+                                </h1>
+                                <h1 className="flex items-center justify-center col-span-">
+                                  {value?.quantityBought}
+                                </h1>
+                                <h1 className="flex items-center justify-end col-span-">
+                                  {value?.price}
+                                </h1>
                               </div>
                             );
                           }
@@ -235,14 +261,12 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
               <div>
                 <Card className="w-full h-full p-3">
                   <CardHeader>
-                    <h1 className="text-2xl font-bold">Your details</h1>
+                    <h1 className="text-xl font-bold">Your details</h1>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-xl flex flex-col gap-3">
+                    <div className="text-lg flex flex-col gap-3">
                       <h1>Fullname: {user.name}</h1>
                       <h1>Email: {user.email}</h1>
-                      <h1>Phone Number: </h1>
-                      <h1>Address: </h1>
                     </div>
                   </CardContent>
                 </Card>
@@ -250,13 +274,13 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
             </div>
           </div>
         </div>
-        <div className="w-full h-full relative">
+        <div className="w-full h-full relative px-5 lg:px-0 py-8 lg:py-0">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-4"
             >
-              <Card>
+              <Card className="p-3">
                 <CardHeader>
                   <h1 className="text-xl font-bold">Summary</h1>
                 </CardHeader>
