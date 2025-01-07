@@ -108,7 +108,7 @@ const SettingPage = () => {
                         Fullname
                       </label>
                       <FormControl>
-                        <Input id="fullname" defaultValue={user.name} />
+                        <Input id="fullname" defaultValue={user.name} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -122,10 +122,21 @@ const SettingPage = () => {
                 <Input id="email" defaultValue={user.email} disabled />
               </div>
               <div className="col-span-1">
-                <label htmlFor="phone" className="text-sm">
-                  Phone
-                </label>
-                <Input id="phone" defaultValue={user.phone} />
+                <FormField
+                  name="phone"
+                  control={accInfoForm.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <label htmlFor="phone" className="text-sm">
+                        Phone
+                      </label>
+                      <FormControl>
+                        <Input id="phone" defaultValue={user.phone} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
           </form>

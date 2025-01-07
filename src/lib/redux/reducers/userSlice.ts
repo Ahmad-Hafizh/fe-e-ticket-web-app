@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 interface IUser {
-  pfp_url: any;
+  pfp_url: string;
   name: string;
   email: string;
   phone?: string;
