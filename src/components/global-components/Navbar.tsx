@@ -1,50 +1,26 @@
-"use client";
-import { useEffect, useState } from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { Button } from "../ui/button";
-import { IoMdClose } from "react-icons/io";
-import Link from "next/link";
-import {
-  Select,
-  SelectItem,
-  Input,
-  Dropdown,
-  DropdownMenu,
-  DropdownTrigger,
-  DropdownItem,
-  Avatar,
-} from "@nextui-org/react";
-import { IoSearchOutline } from "react-icons/io5";
-import { usePathname } from "next/navigation";
-import { useAppSelector } from "@/lib/redux/hooks";
-import { basicGetApi } from "@/app/config/axios";
-import { signIn } from "@/lib/redux/reducers/userSlice";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { useRouter } from "next/navigation";
+'use client';
+import { IoSearchOutline } from 'react-icons/io5';
+import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/lib/redux/hooks';
+import { basicGetApi } from '@/app/config/axios';
+import { signIn, signOut } from '@/lib/redux/reducers/userSlice';
+import { useEffect, useState } from 'react';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { Button } from '../ui/button';
+import { IoMdClose } from 'react-icons/io';
+import Link from 'next/link';
+import { Select, SelectItem, Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const path: string = usePathname();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hide, setHide] = useState<boolean>(
-    path === "/sign-up" ||
-      path === "/sign-in" ||
-      path === "/forgot-password" ||
-      path === "/reset-password" ||
-      path.startsWith("/creator")
-      ? true
-      : false
+    path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false
   );
-
   useEffect(() => {
-    setHide(
-      path === "/sign-up" ||
-        path === "/sign-in" ||
-        path === "/forgot-password" ||
-        path === "/reset-password" ||
-        path.startsWith("/creator")
-        ? true
-        : false
-    );
+    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false);
   }, [path]);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -58,23 +34,26 @@ export default function Navbar() {
   const user = useAppSelector((state) => state.userReducer);
   const dispatch = useAppDispatch();
 
-  console.log("Ini user", user);
-
   const keepLogin = async () => {
     try {
-      const token = localStorage.getItem("tkn");
-      const response = await basicGetApi.get("/users/keep-login", {
+      const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
+      const response = await basicGetApi.get('/users/keep-login', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       dispatch(signIn(response.data.result));
-      console.log(response);
-
-      localStorage.setItem("tkn", response.data.result.newToken);
+      localStorage.setItem('tkn', response.data.result.newToken);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const logOut = () => {
+    dispatch(signOut());
+    localStorage.removeItem('tkn');
+    sessionStorage.removeItem('tkn');
+    route.refresh();
   };
 
   useEffect(() => {
@@ -82,13 +61,13 @@ export default function Navbar() {
   }, []);
 
   const city = [
-    { key: "Jakarta", label: "Jakarta" },
-    { key: "Surabaya", label: "Surabaya" },
-    { key: "Bandung", label: "Bandung" },
-    { key: "Yogyakarta", label: "Yogyakarta" },
+    { key: 'Jakarta', label: 'Jakarta' },
+    { key: 'Surabaya', label: 'Surabaya' },
+    { key: 'Bandung', label: 'Bandung' },
+    { key: 'Yogyakarta', label: 'Yogyakarta' },
   ];
   const route = useRouter();
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState('');
   const onHandleSearch = (e: any) => {
     e.preventDefault();
     route.push(`/search?keyword=${searchKeyword}`);
@@ -96,11 +75,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div
-        className={`${
-          hide ? "hidden" : "block"
-        } sticky top-0 z-20 bg-white bg-opacity-70 shadow-sm backdrop-blur-xl backdrop-filter`}
-      >
+      <div className={`${hide ? 'hidden' : 'block'} sticky top-0 z-20 bg-white bg-opacity-70 shadow-sm backdrop-blur-xl backdrop-filter`}>
         <nav className="flex w-full flex-col justify-between py-3 shadow-sm px-10 md:px-32 lg:px-48 lg:py-6">
           {/**Div dibawah adalah pemisah antara content utama dengan phone menu Modelnya flex-col supaya phone menu bisa turun kebawah
            * Div content mewakili konten navbar
@@ -111,16 +86,8 @@ export default function Navbar() {
             <div className="flex gap-2">
               <div className="hamburger-wrapper flex flex-collg:hidden">
                 <div className="hamburger inline-flex lg:hidden">
-                  <Button
-                    onClick={toggleNavbar}
-                    aria-label="Menu"
-                    className="py-0 px-1 bg-transparent"
-                  >
-                    {!isOpen ? (
-                      <GiHamburgerMenu color="black" />
-                    ) : (
-                      <IoMdClose color="black" />
-                    )}
+                  <Button onClick={toggleNavbar} aria-label="Menu" className="py-0 px-1 bg-transparent">
+                    {!isOpen ? <GiHamburgerMenu color="black" /> : <IoMdClose color="black" />}
                   </Button>
                 </div>
               </div>
@@ -132,15 +99,7 @@ export default function Navbar() {
                 </h1>
                 <div className="hidden lg:inline border-none">
                   <form onSubmit={onHandleSearch}>
-                    <Input
-                      placeholder="Search event here.."
-                      startContent={<IoSearchOutline />}
-                      type="text"
-                      name="search"
-                      value={searchKeyword}
-                      className="border-none"
-                      onChange={(e) => setSearchKeyword(e.target.value)}
-                    />
+                    <Input placeholder="Search event here.." startContent={<IoSearchOutline />} type="text" name="search" value={searchKeyword} className="border-none" onChange={(e) => setSearchKeyword(e.target.value)} />
                   </form>
                 </div>
                 {/* <div className="hidden lg:inline">
@@ -177,47 +136,40 @@ export default function Navbar() {
                 </li>
               </ul>
             </div>
-            {localStorage.getItem("tkn") || sessionStorage.getItem("tkn") ? (
+
+            {user.name ? (
               <div className="flex gap-5">
                 <Link href={`/search`}>
-                  <Button variant={"secondary"}>Explore Event</Button>
+                  <Button variant={'secondary'}>Explore Event</Button>
                 </Link>
-                <Avatar
-                  isBordered
-                  as="button"
-                  className="transition-transform lg:hidden"
-                  color="secondary"
-                  name="Jason Hughes"
-                  size="sm"
-                  src={`${user?.pfp_url}`}
-                />
+                <Avatar isBordered as="button" className="transition-transform lg:hidden" color="secondary" name="Jason Hughes" size="sm" src={`${user?.pfp_url}`} />
                 <div className="hidden lg:inline">
                   <Dropdown placement="bottom-end">
                     <DropdownTrigger>
-                      <Avatar
-                        isBordered
-                        as="button"
-                        className="transition-transform"
-                        color="secondary"
-                        name="Jason Hughes"
-                        size="sm"
-                        src={`${user?.pfp_url}`}
-                      />
+                      <Avatar isBordered as="button" className="transition-transform" color="secondary" name="Jason Hughes" size="sm" src={`${user?.pfp_url}`} />
                     </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Profile Actions"
-                      variant="flat"
-                      className="bg-white rounded-lg p-3"
-                    >
+                    <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-white rounded-lg p-3">
                       <DropdownItem key="profile" className="h-14 gap-2">
                         <p className="font-semibold">{user.name}</p>
                         <p className="font-semibold">{user.email}</p>
                       </DropdownItem>
 
-                      <DropdownItem key="settings">My Settings</DropdownItem>
+                      <DropdownItem key="settings">
+                        <Link href={'/setting/profile'}>Settings</Link>
+                      </DropdownItem>
+                      <DropdownItem key="dashboard">
+                        <Link href={'/creator/dashboard'}>Dashboard</Link>
+                      </DropdownItem>
 
+                      <DropdownItem key="help_and_feedback">
+                        <Button type="button" className="border bg-white text-black hover:bg-gray-200 w-full" onClick={() => route.push('/sign-in')}>
+                          Switch Account
+                        </Button>
+                      </DropdownItem>
                       <DropdownItem key="logout" color="danger">
-                        Log Out
+                        <Button type="button" className="bg-red-700 hover:bg-red-800 w-full" onClick={logOut}>
+                          Log out
+                        </Button>
                       </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
@@ -226,7 +178,7 @@ export default function Navbar() {
             ) : (
               <div className="cta hidden lg:flex gap-2">
                 <Link href={`/search`}>
-                  <Button variant={"secondary"}>Explore Event</Button>
+                  <Button variant={'secondary'}>Explore Event</Button>
                 </Link>
                 <Link href={`/sign-in`}>
                   <Button>Login</Button>
@@ -238,38 +190,20 @@ export default function Navbar() {
             )}
 
             <div className="cta hidden">
-              <Link
-                href={`https://cal.com/satrio-langlang-vlenyy/introductorycall`}
-              >
+              <Link href={`https://cal.com/satrio-langlang-vlenyy/introductorycall`}>
                 <Button>Login</Button>
               </Link>
-              <Link
-                href={`https://cal.com/satrio-langlang-vlenyy/introductorycall`}
-              >
+              <Link href={`https://cal.com/satrio-langlang-vlenyy/introductorycall`}>
                 <Button>Sign Up</Button>
               </Link>
             </div>
           </div>
           {/**Div dibawah adalah menu untuk handphone */}
-          <div
-            className={`phone-menu transition-all duration-300 ease-in-out ese ${
-              isOpen
-                ? "max-h-screen opacity-100"
-                : "max-h-0 opacity-0 overflow-hidden"
-            }`}
-          >
+          <div className={`phone-menu transition-all duration-300 ease-in-out ese ${isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
             {isOpen && (
               <div className="menuphone my-3 flex flex-col py-2 lg:hidden h-screen">
                 <div className="flex gap-4 items-center py-5">
-                  <Avatar
-                    isBordered
-                    as="button"
-                    className="transition-transform h-10 w-10"
-                    color="secondary"
-                    name="Jason Hughes"
-                    size="sm"
-                    src={`${user?.pfp_url}`}
-                  />
+                  <Avatar isBordered as="button" className="transition-transform h-10 w-10" color="secondary" name="Jason Hughes" size="sm" src={`${user?.pfp_url}`} />
                   <div className="flex flex-col">
                     <h1 className="text-sm font-bold">Hello {user.name}!</h1>
                     <h1 className="text-xs">{user.email}</h1>
@@ -277,11 +211,7 @@ export default function Navbar() {
                 </div>
 
                 <li className="my-2 list-none">
-                  <Link
-                    href="/#service"
-                    onClick={closeNavbar}
-                    className="font-semibold"
-                  >
+                  <Link href="/#service" onClick={closeNavbar} className="font-semibold">
                     Dashboard
                   </Link>
                 </li>
@@ -297,20 +227,12 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li className="my-2 list-none">
-                  <Link
-                    href="/#pricing-phone"
-                    onClick={closeNavbar}
-                    className="font-semibold"
-                  >
+                  <Link href="/#pricing-phone" onClick={closeNavbar} className="font-semibold">
                     Setting
                   </Link>
                 </li>
                 <li className="my-2 list-none">
-                  <Link
-                    href="/page/resource/"
-                    onClick={closeNavbar}
-                    className="font-semibold"
-                  >
+                  <Link href="/page/resource/" onClick={closeNavbar} className="font-semibold">
                     Log Out
                   </Link>
                 </li>
