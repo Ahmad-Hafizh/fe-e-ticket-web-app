@@ -13,24 +13,45 @@ const confirmationPage = () => {
 
   //ambil data
   const update = async () => {
-    const response = await basicGetApi.patch(
-      `/transaction/${transactionId.transaction_id}`,
-      {
-        eventId: data.event.event_id,
-        session: data,
-      },
-      {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NCwiZW1haWwiOiJyYWhldzQ2MjMzQGdob2xhci5jb20iLCJyb2xlIjoidXNlciIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE3MzYxNTc2NDd9.Qm8VEUswlL3Izwh6NaURgFVSqyLZvVkHtl0oAZUP6og`,
+    const userData = localStorage.getItem("tkn");
+    if (data.coupon) {
+      const response = await basicGetApi.patch(
+        `/transaction/${transactionId.transaction.transaction_id}`,
+        {
+          eventId: data.event.event_id,
+          organizerCouponId: data.event.organizer_coupon.organizer_coupon_id,
+          session: data,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${userData}`,
+          },
+        }
+      );
 
-    console.log("ini response: ", response);
+      console.log("ini response: ", response);
+    } else {
+      const response = await basicGetApi.patch(
+        `/transaction/${transactionId.transaction.transaction_id}`,
+        {
+          eventId: data.event.event_id,
+          organizerCouponId: null,
+          session: data,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userData}`,
+          },
+        }
+      );
+
+      console.log("ini response: ", response);
+    }
   };
 
   useEffect(() => {
     update();
+    sessionStorage.removeItem("transaction-data");
   }, []);
 
   return (
