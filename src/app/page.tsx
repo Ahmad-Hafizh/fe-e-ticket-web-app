@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import EventCard from '@/components/global-components/EventCard';
 // import RoundedCard from '@/components/global-components/RoundedCard';
 'use client';
@@ -7,7 +9,6 @@ import EventCarousel from '../components/views/landing/EventCarousel';
 import EventCarouselLocation from '../components/views/landing/EventCarouselLocation';
 import Footer from '@/components/global-components/Footer';
 import CarouselRounded from '@/components/global-components/CarouselRounded';
-import Category from '../components/views/landing/Category';
 import { basicGetApi } from './config/axios';
 import { useEffect, useState } from 'react';
 import Banner from '@/components/views/landing/Banner';
@@ -32,6 +33,7 @@ export default function Home() {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+      console.log(error);
     }
   };
 

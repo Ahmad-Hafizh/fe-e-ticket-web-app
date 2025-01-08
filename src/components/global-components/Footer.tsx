@@ -1,5 +1,4 @@
-import { FaInstagram } from "react-icons/fa";
-import Link from "next/link";
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -14,13 +13,13 @@ const Footer = () => {
               <Link href={`/creator/dashboard`}>
                 <h1>Buat Event</h1>
               </Link>
-              <Link href={"/search"}>
+              <Link href={'/search'}>
                 <h1>Event Terbaru</h1>
               </Link>
-              <Link href={"/search"}>
+              <Link href={'/search'}>
                 <h1>Tentang Kami</h1>
               </Link>
-              <Link href={"/search"}>
+              <Link href={'/search'}>
                 <h1>FAQ</h1>
               </Link>
             </div>
@@ -30,16 +29,16 @@ const Footer = () => {
               <h1 className="font-bold text-lg lg:text-xl">Inspirasi Event</h1>
             </div>
             <div className="flex flex-col items-center text-base lg:text-lg text-gray-50 md:gap-1 lg:gap-2">
-              <Link href={"/search?cat=Music"}>
+              <Link href={'/search?cat=Music'}>
                 <h1>Event Musik</h1>
               </Link>
-              <Link href={"search?cat=Drama"}>
+              <Link href={'search?cat=Drama'}>
                 <h1>Event Drama</h1>
               </Link>
-              <Link href={"search?cat=Community"}>
+              <Link href={'search?cat=Community'}>
                 <h1>Event Komunitas</h1>
               </Link>
-              <Link href={"search?cat=Cultural"}>
+              <Link href={'search?cat=Cultural'}>
                 <h1>Event Budaya</h1>
               </Link>
             </div>
@@ -93,9 +92,7 @@ const Footer = () => {
           </ul>
         </div>
         <div className="footer down copyright py-4">
-          <h1 className="text-white text-center text-sm">
-            Copyright of Event dot com. 2024
-          </h1>
+          <h1 className="text-white text-center text-sm">Copyright of Event dot com. 2024</h1>
         </div>
       </div>
     </div>

@@ -1,34 +1,22 @@
-
-"use client";
-import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { basicGetApi } from "@/app/config/axios";
-import { useAppSelector } from "@/lib/redux/hooks";
-import { DataTable } from "./DataTable";
-import { columns, Event } from "./columns";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { LuPlus } from "react-icons/lu";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { basicGetApi } from '@/app/config/axios';
+import { DataTable } from './DataTable';
+import { columns, Event } from './columns';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { LuPlus } from 'react-icons/lu';
 const EventPage = () => {
-  const organizer = useAppSelector((state) => state.organizerReducer);
   const route = useRouter();
-
 
   const [eventList, setEventList] = useState<Event[]>([]);
   const getEventList = async () => {
     try {
-
       const response = await basicGetApi.get(`/search?eo=11&page=1`);
-      console.log("ini", response.data.result);
+      console.log('ini', response.data.result);
       setEventList(response.data.result.events);
-
     } catch (error) {
       console.log(error);
     }
@@ -67,14 +55,9 @@ const EventPage = () => {
             </SelectContent>
           </Select>
 
-          <Button
-            variant={"secondary"}
-            onClick={() => route.push("event/new-event")}
-            className="flex justify-between gap-5 shadow-sm"
-          >
+          <Button variant={'secondary'} onClick={() => route.push('event/new-event')} className="flex justify-between gap-5 shadow-sm">
             New Event <LuPlus />
           </Button>
-
         </div>
       </div>
       <div>

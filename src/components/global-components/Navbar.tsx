@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { IoSearchOutline } from 'react-icons/io5';
 import { usePathname } from 'next/navigation';
@@ -9,7 +10,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { Button } from '../ui/button';
 import { IoMdClose } from 'react-icons/io';
 import Link from 'next/link';
-import { Select, SelectItem, Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
+import { Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { useRouter } from 'next/navigation';
 

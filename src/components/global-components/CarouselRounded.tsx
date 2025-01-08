@@ -1,18 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import EventCard from "@/components/global-components/EventCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { basicGetApi } from "../../app/config/axios";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import RoundedCard from "./RoundedCard";
-import { set } from "zod";
+'use client';
+// import EventCard from "@/components/global-components/EventCard";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+// import { basicGetApi } from "../../app/config/axios";
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import RoundedCard from './RoundedCard';
+// import { set } from "zod";
 
 interface IEventCollection {
   eventDataFromMain: any[];
@@ -125,14 +120,8 @@ const CarouselRounded: React.FC<IEventCollection> = ({ eventDataFromMain }) => {
           <CarouselContent>
             {eventData.map((value: any, index: number) => {
               return (
-                <CarouselItem
-                  key={index}
-                  className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4"
-                >
-                  <RoundedCard
-                    title={value.organizer_name}
-                    pict={value.organizer_logo}
-                  />
+                <CarouselItem key={index} className="basis-2/3 md:basis-1/2 lg:basis-1/5 py-4">
+                  <RoundedCard title={value.organizer_name} pict={value.organizer_logo} />
                   {/**Perlu include di backend */}
                 </CarouselItem>
               );

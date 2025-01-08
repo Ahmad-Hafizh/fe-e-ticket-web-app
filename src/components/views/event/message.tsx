@@ -1,52 +1,32 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { basicGetApi } from "@/app/config/axios";
-import { useRouter, useSearchParams } from "next/navigation";
-import { headers } from "next/headers";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { basicGetApi } from '@/app/config/axios';
 
 const formSchema = z.object({
   reviewScore: z.string().min(1, {
-    message: "Score must be filled",
+    message: 'Score must be filled',
   }),
   reviewContent: z.string().min(10, {
-    message: "Review must be at least 10 characters.",
+    message: 'Review must be at least 10 characters.',
   }),
   reviewImage: z.any().optional(),
 });
 
 export default function ReviewSubmit({ eventId }: { eventId: string }) {
-  const route = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      reviewScore: "",
-      reviewContent: "",
-      reviewImage: "",
+      reviewScore: '',
+      reviewContent: '',
+      reviewImage: '',
     },
   });
 
@@ -59,10 +39,10 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
       reviewImage: values.reviewImage,
     };
 
-    const token = localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+    const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
 
     const callApi = async () => {
-      const response = await basicGetApi.post("/review", payLoad, {
+      const response = await basicGetApi.post('/review', payLoad, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,10 +58,7 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className=" flex flex-col gap-5 w-full"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col gap-5 w-full">
         <div className="flex items-center gap-3">
           <h1 className="font-bold">Score:</h1>
           <FormField
@@ -90,10 +67,7 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Score" />
                     </SelectTrigger>

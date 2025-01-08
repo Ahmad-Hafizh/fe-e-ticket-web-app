@@ -1,14 +1,6 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { useState, useEffect } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 interface IPagination {
   currentPage: number;
@@ -24,13 +16,13 @@ const Paginations: React.FC<IPagination> = ({ currentPage, totalPage }) => {
 
   // Update currentPage whenever the searchParams (URL query) changes
   useEffect(() => {
-    const pageFromQuery = parseInt(searchParams.get("page") || "1", 10);
+    const pageFromQuery = parseInt(searchParams.get('page') || '1', 10);
     setPage(pageFromQuery); // Update the local state based on URL query
   }, [searchParams]); // Depend on searchParams to re-trigger on query change
 
   const pageChange = (page: number) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    newSearchParams.set("page", page.toString()); // Update the page query parameter
+    newSearchParams.set('page', page.toString()); // Update the page query parameter
     route.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
@@ -41,8 +33,8 @@ const Paginations: React.FC<IPagination> = ({ currentPage, totalPage }) => {
         <PaginationItem>
           <PaginationPrevious
             onClick={() => {
-              console.log("Current page is: ", page);
-              console.log("Navigate to: ", page - 1);
+              console.log('Current page is: ', page);
+              console.log('Navigate to: ', page - 1);
               if (currentPage > 1) pageChange(page - 1);
             }}
             className="cursor-pointer"
@@ -53,7 +45,7 @@ const Paginations: React.FC<IPagination> = ({ currentPage, totalPage }) => {
         {Array.from({ length: totalPage }, (_, index) => (
           <PaginationItem key={index}>
             <PaginationLink
-              onClick={(e) => {
+              onClick={() => {
                 pageChange(index + 1); // Use onClick to trigger page change
               }}
               isActive={page === index + 1}
@@ -74,8 +66,8 @@ const Paginations: React.FC<IPagination> = ({ currentPage, totalPage }) => {
         <PaginationItem>
           <PaginationNext
             onClick={() => {
-              console.log("Current page is: ", page);
-              console.log("Navigate to: ", page + 1);
+              console.log('Current page is: ', page);
+              console.log('Navigate to: ', page + 1);
               if (page >= 1) pageChange(page + 1);
             }}
             className="cursor-pointer"
