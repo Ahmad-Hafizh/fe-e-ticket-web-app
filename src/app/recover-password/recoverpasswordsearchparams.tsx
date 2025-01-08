@@ -2,34 +2,34 @@
 import React, { useRef } from 'react';
 import { Input } from '@/components/global-components/CustomInput';
 import { Button } from '@/components/ui/button';
-import { basicGetApi } from '../config/axios';
-import { useSearchParams } from 'next/navigation';
+// import { basicGetApi } from '../config/axios';
+// import { useSearchParams } from 'next/navigation';
 
 const RecoverPassPage = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const confPasswordRef = useRef<HTMLInputElement>(null);
-  const searchParams = useSearchParams();
-  const sendNewPassword = async () => {
-    try {
-      const token = searchParams.get('a_t');
-      const response = await basicGetApi.patch(
-        '/users/recover-password',
-        { password: passwordRef.current?.value },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert(response.data.message || 'success');
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const searchParams = useSearchParams();
+  // const sendNewPassword = async () => {
+  //   try {
+  //     const token = searchParams.get('a_t');
+  //     const response = await basicGetApi.patch(
+  //       '/users/recover-password',
+  //       { password: passwordRef.current?.value },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     alert(response.data.message || 'success');
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const onSubmit = () => {
     if (passwordRef.current?.value === confPasswordRef.current?.value) {
-      sendNewPassword();
+      // sendNewPassword();
     } else {
       alert('confirm password is not similar');
     }

@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { useAppSelector } from '@/lib/redux/hooks';
 
 interface IEventDetailPage {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
@@ -86,7 +86,7 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
     const currentUrl = window.location.pathname;
     localStorage.setItem('redirectTo', currentUrl);
 
-    const getData = async () => {
+    const getData = async (): Promise<void> => {
       try {
         setLoading(true);
         const slug = (await params).slug;

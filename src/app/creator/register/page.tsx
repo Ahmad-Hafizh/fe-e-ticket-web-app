@@ -19,7 +19,7 @@ interface IBank {
   bank_account_number: string;
 }
 
-const CreatorRegisterPage = () => {
+const CreatorRegisterPage: React.FC = () => {
   const [page, setPage] = useState(0);
   const [organization, setOrganization] = useState<IOrganization | null>(null);
   const [bank, setBank] = useState<IBank | null>(null);
