@@ -36,7 +36,9 @@ const EventCard: React.FC<ICardEvent> = ({
           <h1 className="text-sm font-medium text-gray-600">
             {eventStartDate.slice(0, 10)}
           </h1>
-          <h1 className="text-sm font-bold">IDR {eventPrice}</h1>
+          <h1 className="text-sm">
+            Start from <span className="font-bold">IDR {eventPrice}</span>
+          </h1>
         </div>
       </div>
       <hr></hr>

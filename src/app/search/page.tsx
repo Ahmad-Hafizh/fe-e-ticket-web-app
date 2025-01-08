@@ -17,7 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { basicGetApi } from "../config/axios";
 import { Button } from "@/components/ui/button";
 import EventCard from "@/components/global-components/EventCard";
@@ -129,6 +129,7 @@ const SearchContent = () => {
   };
 
   //Handle checkbox filter
+
   const handlingFilter = (id: string, e: any) => {
     if (e.target.checked) {
       dynamicQuery(id, e.target.value);
@@ -156,10 +157,10 @@ const SearchContent = () => {
   };
 
   const setPrice = () => {
-    if (Number(pricemin) > Number(pricemax)) {
-      alert("Price From should not be greater than Price To.");
-      return;
-    }
+    // if (Number(pricemin) > Number(pricemax)) {
+    //   alert("Price From should not be greater than Price To.");
+    //   return;
+    // }
     const searchParams = new URLSearchParams(params.toString());
 
     if (pricemin) {
@@ -187,10 +188,10 @@ const SearchContent = () => {
   };
 
   const setDate = () => {
-    if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
-      alert("Start Date should not be later than End Date.");
-      return;
-    }
+    // if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+    //   alert("Start Date should not be later than End Date.");
+    //   return;
+    // }
     const searchParams = new URLSearchParams(params.toString());
     if (fromDate) {
       searchParams.set("startdate", fromDate);
@@ -272,17 +273,6 @@ const SearchContent = () => {
                       />
                     </div>
                     <div className="flex gap-2 justify-between items-center">
-                      <label>Food</label>
-                      <input
-                        type="checkbox"
-                        id="category"
-                        name="Food"
-                        value="Food"
-                        checked={isChecked("cat", "Food")}
-                        onChange={(e) => handlingFilter("cat", e)}
-                      />
-                    </div>
-                    <div className="flex gap-2 justify-between items-center">
                       <label>International</label>
                       <input
                         type="checkbox"
@@ -290,6 +280,72 @@ const SearchContent = () => {
                         name="International"
                         value="International"
                         checked={isChecked("cat", "International")}
+                        onChange={(e) => handlingFilter("cat", e)}
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-between items-center">
+                      <label>Nature</label>
+                      <input
+                        type="checkbox"
+                        id="category"
+                        name="Nature"
+                        value="Nature"
+                        checked={isChecked("cat", "Nature")}
+                        onChange={(e) => handlingFilter("cat", e)}
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-between items-center">
+                      <label>Adventure</label>
+                      <input
+                        type="checkbox"
+                        id="category"
+                        name="Adventure"
+                        value="Adventure"
+                        checked={isChecked("cat", "Adventure")}
+                        onChange={(e) => handlingFilter("cat", e)}
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-between items-center">
+                      <label>Foodies</label>
+                      <input
+                        type="checkbox"
+                        id="category"
+                        name="Foodies"
+                        value="Foodies"
+                        checked={isChecked("cat", "Foodies")}
+                        onChange={(e) => handlingFilter("cat", e)}
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-between items-center">
+                      <label>Health</label>
+                      <input
+                        type="checkbox"
+                        id="category"
+                        name="Health"
+                        value="Health"
+                        checked={isChecked("cat", "Health")}
+                        onChange={(e) => handlingFilter("cat", e)}
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-between items-center">
+                      <label>Travel</label>
+                      <input
+                        type="checkbox"
+                        id="category"
+                        name="Travel"
+                        value="Travel"
+                        checked={isChecked("cat", "Travel")}
+                        onChange={(e) => handlingFilter("cat", e)}
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-between items-center">
+                      <label>Pop Culture</label>
+                      <input
+                        type="checkbox"
+                        id="category"
+                        name="PopCulture"
+                        value="PopCulture"
+                        checked={isChecked("cat", "PopCulture")}
                         onChange={(e) => handlingFilter("cat", e)}
                       />
                     </div>
