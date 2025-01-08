@@ -6,13 +6,13 @@ import { basicGetApi } from '@/app/config/axios';
 // import { useRouter } from "next/navigation";
 
 const ConfirmationPage = () => {
-  const data = JSON.parse(sessionStorage.getItem('transaction-data')!);
   // const user = useAppSelector((state) => state.userReducer);
-  const transactionId = JSON.parse(sessionStorage.getItem('transaction-data')!);
   // const route = useRouter();
 
   //ambil data
   const update = async () => {
+    const data = JSON.parse(sessionStorage.getItem('transaction-data')!);
+    const transactionId = JSON.parse(sessionStorage.getItem('transaction-data')!);
     const userData = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
     if (data.coupon) {
       const response = await basicGetApi.patch(

@@ -11,7 +11,7 @@ const TransactionSettingPage = () => {
   const [transactionList, setTransactionList] = useState<any[]>([]);
   const updateTransaction = async () => {
     const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
-    const response = await basicGetApi.get(`transaction/`, {
+    const response = await basicGetApi.get(`transaction/user`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

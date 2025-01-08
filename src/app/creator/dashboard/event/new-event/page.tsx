@@ -1,30 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import { Input } from '@/components/global-components/CustomInput';
-import { Textarea } from '@/components/ui/textarea';
-import React, { useRef, useState } from 'react';
-import { DatePickerWithRange } from './DatePickerRange';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { basicGetApi } from '@/app/config/axios';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
+"use client";
+import { Input } from "@/components/global-components/CustomInput";
+import { Textarea } from "@/components/ui/textarea";
+import React, { useRef, useState } from "react";
+import { DatePickerWithRange } from "./DatePickerRange";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { basicGetApi } from "@/app/config/axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   eventBanner: z
     .any()
-    .refine((file) => file, { message: 'File is required' })
-    .refine((file) => ['image/png', 'image/jpeg', 'image/jpg'].includes(file?.type), { message: 'Invalid image file type' })
+    .refine((file) => file, { message: "File is required" })
+    .refine(
+      (file) => ["image/png", "image/jpeg", "image/jpg"].includes(file?.type),
+      { message: "Invalid image file type" }
+    )
     .refine((file) => file?.size <= 5 * 1024 * 1024, {
-      message: 'File size should not exceed 5MB',
+      message: "File size should not exceed 5MB",
     }),
-  eventTitle: z.string().min(4, { message: 'Must be more than 4 characters long' }).max(200, { message: 'Must be less than 200 characters long' }),
-  eventCategory: z.array(z.string()).min(1, { message: 'At least one category must be selected' }),
-  eventDescription: z.string().min(50, { message: 'Must be more than 50 or more characters long' }),
+  eventTitle: z
+    .string()
+    .min(4, { message: "Must be more than 4 characters long" })
+    .max(200, { message: "Must be less than 200 characters long" }),
+  eventCategory: z
+    .array(z.string())
+    .min(1, { message: "At least one category must be selected" }),
+  eventDescription: z
+    .string()
+    .min(50, { message: "Must be more than 50 or more characters long" }),
   startEndDate: z.object({
     from: z.date(),
     to: z.date(),
@@ -32,8 +54,12 @@ const formSchema = z.object({
   startTime: z.string(),
   endTime: z.string(),
   timezone: z.string(),
-  addressName: z.string().max(100, { message: 'must be less than 100 characters long' }),
-  address: z.string().min(4, { message: 'Must be more than e characters long' }),
+  addressName: z
+    .string()
+    .max(100, { message: "must be less than 100 characters long" }),
+  address: z
+    .string()
+    .min(4, { message: "Must be more than e characters long" }),
   city: z.string(),
   country: z.string(),
   zipcode: z.string().optional(),
@@ -50,32 +76,42 @@ const NewEventPage = () => {
   const [tickets, setTickets] = useState<any[]>([]);
   const route = useRouter();
 
-  const fixedCategories = ['Music', 'Festival', 'International', 'Nature', 'Adventure', 'Foodies', 'Health', 'Travel', 'Pop Culture'];
+  const fixedCategories = [
+    "Music",
+    "Festival",
+    "International",
+    "Nature",
+    "Adventure",
+    "Foodies",
+    "Health",
+    "Travel",
+    "PopCulture",
+  ];
 
-  const fixedTimezone = ['UTC+7', 'UTC+8', 'UTC+9'];
+  const fixedTimezone = ["UTC+7", "UTC+8", "UTC+9"];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       eventBanner: null,
-      eventTitle: '',
+      eventTitle: "",
       eventCategory: [],
-      eventDescription: '',
+      eventDescription: "",
       startEndDate: {
         from: new Date(),
         to: new Date(),
       },
-      startTime: '',
-      endTime: '',
-      timezone: 'UTC+7',
-      addressName: '',
-      address: '',
-      city: '',
-      country: 'Indonesia',
-      zipcode: '',
-      organizer_coupon_code: '',
-      discount: '',
-      quantity: '',
+      startTime: "",
+      endTime: "",
+      timezone: "UTC+7",
+      addressName: "",
+      address: "",
+      city: "",
+      country: "Indonesia",
+      zipcode: "",
+      organizer_coupon_code: "",
+      discount: "",
+      quantity: "",
       couponStartEndDate: {
         from: new Date(),
         to: new Date(),
@@ -103,25 +139,25 @@ const NewEventPage = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log('City: ', values.city);
+    console.log("City: ", values.city);
     try {
       const formData = new FormData();
 
-      formData.append('eventTitle', values.eventTitle);
-      formData.append('eventDescription', values.eventDescription);
+      formData.append("eventTitle", values.eventTitle);
+      formData.append("eventDescription", values.eventDescription);
       formData.append(
-        'eventTimeDate',
+        "eventTimeDate",
         JSON.stringify({
-          startDate: values.startEndDate.from.toISOString().split('T')[0],
-          endDate: values.startEndDate.to.toISOString().split('T')[0],
+          startDate: values.startEndDate.from.toISOString().split("T")[0],
+          endDate: values.startEndDate.to.toISOString().split("T")[0],
           startTime: values.startTime,
           endTime: values.endTime,
           timezone: values.timezone,
         })
       );
-      formData.append('eventCategory', JSON.stringify(values.eventCategory));
+      formData.append("eventCategory", JSON.stringify(values.eventCategory));
       formData.append(
-        'eventLocation',
+        "eventLocation",
         JSON.stringify({
           addressName: values.addressName,
           address: values.address,
@@ -130,36 +166,37 @@ const NewEventPage = () => {
           zipcode: values.zipcode,
         })
       );
-      formData.append('ticketTypes', JSON.stringify(tickets));
+      formData.append("ticketTypes", JSON.stringify(tickets));
       formData.append(
-        'organizerCouponInput',
+        "organizerCouponInput",
         JSON.stringify({
           organizer_coupon_code: values.organizer_coupon_code,
           discount: values.discount,
           quantity: values.quantity,
-          startDate: values.couponStartEndDate.from.toISOString().split('T')[0],
-          endDate: values.couponStartEndDate.to.toISOString().split('T')[0],
+          startDate: values.couponStartEndDate.from.toISOString().split("T")[0],
+          endDate: values.couponStartEndDate.to.toISOString().split("T")[0],
         })
       );
 
       if (values.eventBanner) {
-        formData.append('eventBanner', values.eventBanner);
+        formData.append("eventBanner", values.eventBanner);
       }
 
       if (tickets[0]) {
-        const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
+        const token =
+          localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
 
-        const response = await basicGetApi.post('/event', formData, {
+        const response = await basicGetApi.post("/event", formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.data.success) {
-          route.push('/creator/dashboard/event');
+          route.push("/creator/dashboard/event");
         }
-        console.log('ini response:', response);
+        console.log("ini response:", response);
       } else {
-        alert('ticket cant be empty');
+        alert("ticket cant be empty");
       }
     } catch (error) {
       console.log(error);
@@ -174,7 +211,13 @@ const NewEventPage = () => {
             <div className="flex flex-col gap-4 pb-5">
               <p className="text-xl font-bold">Event Banner</p>
               <div className="banner flex flex-col gap-3">
-                <div className="w-full h-fit bg-gray-200 rounded-xl overflow-hidden">{imageUrl ? <img src={imageUrl} className="object-cover" /> : <></>}</div>
+                <div className="w-full h-fit bg-gray-200 rounded-xl overflow-hidden">
+                  {imageUrl ? (
+                    <img src={imageUrl} className="object-cover" />
+                  ) : (
+                    <></>
+                  )}
+                </div>
                 <FormField
                   control={form.control}
                   name="eventBanner"
@@ -186,8 +229,8 @@ const NewEventPage = () => {
                           onChange={(e) => {
                             const files = e.target.files;
                             const file = files?.[0];
-                            console.log('File:', file);
-                            console.log('File type:', file?.type);
+                            console.log("File:", file);
+                            console.log("File type:", file?.type);
                             field.onChange(file || null);
                             if (file) {
                               const fileUrl = URL.createObjectURL(file);
@@ -195,9 +238,9 @@ const NewEventPage = () => {
                             }
 
                             if (file instanceof File) {
-                              console.log('This is a valid file!');
+                              console.log("This is a valid file!");
                             } else {
-                              console.log('This is not a file!');
+                              console.log("This is not a file!");
                             }
                           }}
                         />
@@ -206,7 +249,9 @@ const NewEventPage = () => {
                     </FormItem>
                   )}
                 />
-                <h1 className="text-sm px-3 -mt-1 mb-5">File must be less than 10MB</h1>
+                <h1 className="text-sm px-3 -mt-1 mb-5">
+                  File must be less than 10MB
+                </h1>
               </div>
             </div>
 
@@ -218,7 +263,11 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input {...field} title="Event name" placeholder="enter event name" />
+                      <Input
+                        {...field}
+                        title="Event name"
+                        placeholder="enter event name"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -235,7 +284,11 @@ const NewEventPage = () => {
                         <label htmlFor="description" className="text-sm">
                           Description
                         </label>
-                        <Textarea {...field} placeholder="event description" id="description" />
+                        <Textarea
+                          {...field}
+                          placeholder="event description"
+                          id="description"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -303,7 +356,12 @@ const NewEventPage = () => {
                     render={({ field }) => (
                       <FormItem className="w-full h-[75px]">
                         <FormControl>
-                          <Select {...field} value={field.value} onValueChange={(value) => field.onChange(value)} name="timezone">
+                          <Select
+                            {...field}
+                            value={field.value}
+                            onValueChange={(value) => field.onChange(value)}
+                            name="timezone"
+                          >
                             <SelectTrigger className="w-[180px]">
                               <SelectValue placeholder="Timezone" />
                             </SelectTrigger>
@@ -339,7 +397,11 @@ const NewEventPage = () => {
                               id={category}
                               value={category}
                               onChange={(e) => {
-                                const updatedCategories = e.target.checked ? [...field.value, category] : field.value.filter((cat: any) => cat !== category);
+                                const updatedCategories = e.target.checked
+                                  ? [...field.value, category]
+                                  : field.value.filter(
+                                      (cat: any) => cat !== category
+                                    );
                                 field.onChange(updatedCategories);
                               }}
                             />
@@ -361,7 +423,11 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input title="Address name" placeholder="enter the address name" {...field} />
+                      <Input
+                        title="Address name"
+                        placeholder="enter the address name"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -373,7 +439,11 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input title="Address" placeholder="enter the address" {...field} />
+                      <Input
+                        title="Address"
+                        placeholder="enter the address"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -398,7 +468,11 @@ const NewEventPage = () => {
                   render={({ field }) => (
                     <FormItem className="w-full h-[75px]">
                       <FormControl>
-                        <Input title="City" placeholder="enter the city" {...field} />
+                        <Input
+                          title="City"
+                          placeholder="enter the city"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -412,7 +486,11 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input title="Zipcode" placeholder="enter the zipcode" {...field} />
+                      <Input
+                        title="Zipcode"
+                        placeholder="enter the zipcode"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -428,7 +506,11 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input title="Coupon code" placeholder="enter the coupon code" {...field} />
+                      <Input
+                        title="Coupon code"
+                        placeholder="enter the coupon code"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -440,7 +522,12 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input title="Discount (in currency)" placeholder="enter the discount amount" type="number" {...field} />
+                      <Input
+                        title="Discount (in currency)"
+                        placeholder="enter the discount amount"
+                        type="number"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -452,7 +539,12 @@ const NewEventPage = () => {
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
-                      <Input title="Coupon quantity (per transaction)" placeholder="enter coupon quantity" type="number" {...field} />
+                      <Input
+                        title="Coupon quantity (per transaction)"
+                        placeholder="enter coupon quantity"
+                        type="number"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -486,10 +578,28 @@ const NewEventPage = () => {
       <div className="col-span-2 border p-10 h-fit rounded-xl">
         <p className="text-xl font-bold">Ticket</p>
         <div className="flex flex-col gap-2 py-10">
-          <Input title="Ticket name" placeholder="enter ticket name" ref={ticketName} />
-          <Input title="Ticket price" type="number" placeholder="enter ticket price" ref={ticketPrice} />
-          <Input title="Quantity" type="number" placeholder="enter ticket quantity" ref={ticketQuantity} />
-          <Button type="button" className="w-full rounded-full" onClick={addTicket}>
+          <Input
+            title="Ticket name"
+            placeholder="enter ticket name"
+            ref={ticketName}
+          />
+          <Input
+            title="Ticket price"
+            type="number"
+            placeholder="enter ticket price"
+            ref={ticketPrice}
+          />
+          <Input
+            title="Quantity"
+            type="number"
+            placeholder="enter ticket quantity"
+            ref={ticketQuantity}
+          />
+          <Button
+            type="button"
+            className="w-full rounded-full"
+            onClick={addTicket}
+          >
             Add Ticket
           </Button>
         </div>
