@@ -1,5 +1,5 @@
 'use client';
-import { Home, Settings, CreditCard, UserRoundPen, Ticket } from 'lucide-react';
+import { Home, Settings, CreditCard, UserRoundPen, Ticket, DollarSign } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { basicGetApi } from '@/app/config/axios';
@@ -18,6 +18,11 @@ const dashboardItems = [
     title: 'Event',
     url: '/creator/dashboard/event',
     icon: Ticket,
+  },
+  {
+    title: 'Transaction',
+    url: '/creator/dashboard/transaction',
+    icon: DollarSign,
   },
 ];
 const accountItems = [

@@ -33,6 +33,9 @@ const EventPage = () => {
       <div className="flex justify-between ">
         <Input type="text" placeholder="Search your events" className="w-96" />
         <div className="flex gap-2">
+          <Button onClick={() => route.push('event/new-event')} className="flex justify-between gap-5 shadow-sm ">
+            New Event <LuPlus />
+          </Button>
           <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Status" />
@@ -54,10 +57,6 @@ const EventPage = () => {
               <SelectItem value="system">Active</SelectItem>
             </SelectContent>
           </Select>
-
-          <Button variant={'secondary'} onClick={() => route.push('event/new-event')} className="flex justify-between gap-5 shadow-sm">
-            New Event <LuPlus />
-          </Button>
         </div>
       </div>
       <div>
