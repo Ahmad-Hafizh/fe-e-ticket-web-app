@@ -1,35 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import EventCard from "@/components/global-components/EventCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { basicGetApi } from "../../../app/config/axios";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { get } from "http";
-import { set } from "zod";
+'use client';
+import EventCard from '@/components/global-components/EventCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { basicGetApi } from '../../../app/config/axios';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface IEventCollection {
   eventDataFromMain: any[];
@@ -43,14 +25,12 @@ interface IEventData {
   ticket_types: any[];
 }
 
-const EventCarouselLocation: React.FC<IEventCollection> = ({
-  eventDataFromMain,
-}) => {
+const EventCarouselLocation: React.FC<IEventCollection> = ({ eventDataFromMain }) => {
   const [eventData, setEventData] = useState<IEventData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any | null>(null);
   const [open, setOpen] = useState<any>(false);
-  const [value, setValue] = useState<any>("");
+  const [value, setValue] = useState<any>('');
   const [location, setAllLocation] = useState<any | null>([]);
 
   useEffect(() => {
@@ -82,11 +62,11 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
 
   const getAllLocation = async () => {
     try {
-      const response = await basicGetApi.get("/event/location");
+      const response = await basicGetApi.get('/event/location');
       if (response.data.result) {
         setAllLocation(response.data.result);
       } else {
-        throw new Error("Error get location");
+        throw new Error('Error get location');
       }
     } catch (error) {
       console.log(error);
@@ -95,12 +75,10 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
 
   const fetchByLocation = async (location: string) => {
     try {
-
       const response = await basicGetApi.get(`/search?city=${location}&page=1`);
       setEventData(response.data.result.events);
-      console.log("Inii response: ", response);
-      console.log("Ini evendata:", eventData);
-
+      console.log('Inii response: ', response);
+      console.log('Ini evendata:', eventData);
     } catch (error) {
       console.log(error);
     }
@@ -113,14 +91,8 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
         <div>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-              <Button
-                role="combobox"
-                aria-expanded={open}
-                className="h-full bg-transparent text-black hover:bg-transparent hover:text-black"
-              >
-                <h1 className="text-lg">
-                  {value || location[0]?.city_name || "Select a city.."}
-                </h1>
+              <Button role="combobox" aria-expanded={open} className="h-full bg-transparent text-black hover:bg-transparent hover:text-black">
+                <h1 className="text-lg">{value || location[0]?.city_name || 'Select a city..'}</h1>
                 <ChevronsUpDown className="opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -141,14 +113,7 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
                         }}
                       >
                         {loc.city_name}
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            value === loc.city_name
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
+                        <Check className={cn('ml-auto', value === loc.city_name ? 'opacity-100' : 'opacity-0')} />
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -166,19 +131,12 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
               if (!loading && eventData[index]) {
                 const event: IEventData = eventData[index];
                 return (
-                  <CarouselItem
-                    key={index}
-                    className="basis-2/3 md:basis-1/2 lg:basis-1/4 py-4"
-                  >
+                  <CarouselItem key={index} className="basis-2/3 md:basis-1/2 lg:basis-1/4 py-4">
                     <EventCard
                       eventImg={event.imgEvent}
-                      eventOrganizerName={event.organizer.organizer_name || ""}
-                      eventPrice={`${Math.min(
-                        ...event.ticket_types.map((ticket: any) => ticket.price)
-                      )}`}
-                      eventOrganizerProfile={
-                        event.organizer.organizer_logo || ""
-                      }
+                      eventOrganizerName={event.organizer.organizer_name || ''}
+                      eventPrice={`${Math.min(...event.ticket_types.map((ticket: any) => ticket.price))}`}
+                      eventOrganizerProfile={event.organizer.organizer_logo || ''}
                       eventStartDate={event.startDate}
                       eventTitle={event.title}
                       onClick={() => {
@@ -189,10 +147,7 @@ const EventCarouselLocation: React.FC<IEventCollection> = ({
                 );
               } else {
                 return (
-                  <CarouselItem
-                    className="basis-2/3 md:basis-1/3 lg:basis-1/4 py-5"
-                    key={index}
-                  >
+                  <CarouselItem className="basis-2/3 md:basis-1/3 lg:basis-1/4 py-5" key={index}>
                     <div className="flex flex-col justify-between border-none shadow-lg rounded-lg bg-white w-full">
                       <Skeleton className="rounded-tr-lg rounded-tl-lg h-48" />
                       <div className="py-3 px-5 md:py-4 flex-col flex gap-2">

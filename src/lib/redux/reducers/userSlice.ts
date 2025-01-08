@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 interface IUser {
-  pfp_url: any;
+  pfp_url: string;
   name: string;
   email: string;
   phone?: string;
   role: string;
   isVerified: boolean;
+  isAuth: boolean;
 }
 
 const initalUser: IUser = {
@@ -16,6 +17,7 @@ const initalUser: IUser = {
   isVerified: false,
   phone: '',
   pfp_url: '',
+  isAuth: false,
 };
 
 const userSlice = createSlice({

@@ -14,15 +14,8 @@ import { signIn } from '@/lib/redux/reducers/userSlice';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const formSchema = z.object({
-  email: z
-    .string()
-    .min(4, { message: "Email must be more than 4 characters" })
-    .max(100, { message: "Email must be less than 100 characters" })
-    .email({ message: "email is invalid" }),
-  password: z
-    .string()
-    .min(4, { message: "password must be more than 8 characters" })
-    .max(100, { message: "Email must be less than 100 characters" }),
+  email: z.string().min(4, { message: 'Email must be more than 4 characters' }).max(100, { message: 'Email must be less than 100 characters' }).email({ message: 'email is invalid' }),
+  password: z.string().min(4, { message: 'password must be more than 8 characters' }).max(100, { message: 'Email must be less than 100 characters' }),
 });
 
 const SignInPage = () => {
@@ -33,19 +26,19 @@ const SignInPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await basicGetApi.post("/users/signin", {
+      const response = await basicGetApi.post('/users/signin', {
         email: values.email,
         password: values.password,
       });
 
-      dispatch(signIn(response.data.result));
+      dispatch(signIn({ ...response.data.result, isAuth: true }));
       if (remember) {
         localStorage.setItem('tkn', response.data.result.token);
       } else {
@@ -85,11 +78,7 @@ const SignInPage = () => {
                 render={({ field }) => (
                   <FormItem className="h-[75px]">
                     <FormControl>
-                      <Input
-                        {...field}
-                        title="Email"
-                        placeholder="Enter your email address"
-                      />
+                      <Input {...field} title="Email" placeholder="Enter your email address" />
                     </FormControl>
                     <FormMessage className="!mt-0 ml-5" />
                   </FormItem>
@@ -101,12 +90,7 @@ const SignInPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        {...field}
-                        title="Password"
-                        placeholder="Enter your password"
-                        type="password"
-                      />
+                      <Input {...field} title="Password" placeholder="Enter your password" type="password" />
                     </FormControl>
                     <FormMessage className="!mt-0 ml-5" />
                   </FormItem>

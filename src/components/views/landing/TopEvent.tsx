@@ -1,6 +1,7 @@
-"use client";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface ITopEvent {
   eventData: any[];
@@ -24,16 +25,9 @@ const TopEvent: React.FC<ITopEvent> = ({ eventData }) => {
                 route.push(`/event/${value.title}`);
               }}
             >
-              <h1 className="text-6xl md:text-8xl lg:text-7xl font-black text-white">
-                {index + 1}
-              </h1>
+              <h1 className="text-6xl md:text-8xl lg:text-7xl font-black text-white">{index + 1}</h1>
               <div className="relative w-full h-24 md:h-32 lg:h-60 rounded-xl shadow-lg overflow-hidden">
-                <Image
-                  fill
-                  alt="ok"
-                  src={value.imgEvent}
-                  className="absolute object-cover hover:shadow-md"
-                />
+                <Image fill alt="ok" src={value.imgEvent} className="absolute object-cover hover:shadow-md" />
               </div>
             </div>
           );

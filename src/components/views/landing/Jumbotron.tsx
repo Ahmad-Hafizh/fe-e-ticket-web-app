@@ -1,19 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import Autoplay from "embla-carousel-autoplay";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
-import { basicGetApi } from "../../../app/config/axios";
-import { useRouter } from "next/navigation";
-import { set } from "zod";
+'use client';
+import Autoplay from 'embla-carousel-autoplay';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useRef, useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 interface IJumbotron {
   // apicall: string;
@@ -51,12 +44,7 @@ const Jumbotron: React.FC<IJumbotron> = ({ eventDataFromLandingPage }) => {
 
   return (
     <div className="w-full">
-      <Carousel
-        plugins={[plugin.current]}
-        className="w-full relative group"
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
-      >
+      <Carousel plugins={[plugin.current]} className="w-full relative group" onMouseEnter={plugin.current.stop} onMouseLeave={plugin.current.reset}>
         <CarouselContent>
           {loading ? (
             <CarouselItem className="basis-full">

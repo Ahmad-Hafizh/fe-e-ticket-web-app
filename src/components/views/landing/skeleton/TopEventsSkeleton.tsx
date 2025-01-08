@@ -1,5 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import exp from "constants";
+import { Skeleton } from '@/components/ui/skeleton';
 
 const TopEventsSkeleton = () => {
   return (
