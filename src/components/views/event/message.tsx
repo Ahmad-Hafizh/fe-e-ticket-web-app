@@ -58,10 +58,13 @@ export default function ReviewSubmit({ eventId }: { eventId: string }) {
       reviewContent: values.reviewContent,
       reviewImage: values.reviewImage,
     };
+
+    const token = localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+
     const callApi = async () => {
       const response = await basicGetApi.post("/review", payLoad, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NCwiZW1haWwiOiJyYWhldzQ2MjMzQGdob2xhci5jb20iLCJyb2xlIjoidXNlciIsImlzVmVyaWZpZWQiOmZhbHNlLCJpYXQiOjE3MzYxNTc2NDd9.Qm8VEUswlL3Izwh6NaURgFVSqyLZvVkHtl0oAZUP6og`,
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log(response);

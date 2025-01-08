@@ -235,99 +235,106 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
               <h1 className="text-xl font-bold">Descriptionss</h1>
               <p className="text-lg">{eventData.description}</p>
             </div>
-            <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-3 flex flex-col lg:hidden">
-              <h1 className="text-xl font-bold">Ticketss</h1>
-              <div className="ticket-container">
-                {eventData.ticket_types.map((ticket: any, index: number) => {
-                  return (
-                    <div
-                      key={index}
-                      className="ticket flex justify-between py-2 lg:py-4 lg:px-10 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3"
-                    >
-                      <div>
-                        <h1 className="text-lg font-bold">{ticket.types}</h1>
-                        {ticket.price === 0 ? (
-                          <h2 className="text-md">Price: FREE</h2>
-                        ) : (
-                          <h2 className="text-md">Price: IDR.{ticket.price}</h2>
-                        )}
-                        {ticket.quantity_available === 0 ? (
-                          <></>
-                        ) : (
-                          <h2 className="text-sm">
-                            Only {ticket.quantity_available} left.
-                          </h2>
-                        )}
+            {isFinished ? (
+              <></>
+            ) : (
+              <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-3 flex flex-col lg:hidden">
+                <h1 className="text-xl font-bold">Ticketss</h1>
+                <div className="ticket-container">
+                  {eventData.ticket_types.map((ticket: any, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        className="ticket flex justify-between py-2 lg:py-4 lg:px-10 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3"
+                      >
+                        <div>
+                          <h1 className="text-lg font-bold">{ticket.types}</h1>
+                          {ticket.price === 0 ? (
+                            <h2 className="text-md">Price: FREE</h2>
+                          ) : (
+                            <h2 className="text-md">
+                              Price: IDR.{ticket.price}
+                            </h2>
+                          )}
+                          {ticket.quantity_available === 0 ? (
+                            <></>
+                          ) : (
+                            <h2 className="text-sm">
+                              Only {ticket.quantity_available} left.
+                            </h2>
+                          )}
+                        </div>
+                        <div className="flex gap-2 items-center">
+                          {ticket.quantity_available === 0 ? (
+                            <h2 className="text-md">SOLD</h2>
+                          ) : (
+                            <>
+                              <h2 className="text-md">Quantity</h2>
+                              <select
+                                className="p-2"
+                                onChange={(e) =>
+                                  updateTicketQuantity(
+                                    index,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                                value={ticketQuantities[index]}
+                              >
+                                {[...Array(8).keys()].map((num) => (
+                                  <option key={num} value={num}>
+                                    {num}
+                                  </option>
+                                ))}
+                                {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
+                              </select>
+                            </>
+                          )}
+                          {/* <Button>Buy Ticket</Button> */}
+                        </div>
                       </div>
-                      <div className="flex gap-2 items-center">
-                        {ticket.quantity_available === 0 ? (
-                          <h2 className="text-md">SOLD</h2>
-                        ) : (
-                          <>
-                            <h2 className="text-md">Quantity</h2>
-                            <select
-                              className="p-2"
-                              onChange={(e) =>
-                                updateTicketQuantity(
-                                  index,
-                                  parseInt(e.target.value)
-                                )
-                              }
-                              value={ticketQuantities[index]}
-                            >
-                              {[...Array(8).keys()].map((num) => (
-                                <option key={num} value={num}>
-                                  {num}
-                                </option>
-                              ))}
-                              {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
-                            </select>
-                          </>
-                        )}
-                        {/* <Button>Buy Ticket</Button> */}
-                      </div>
+                    );
+                  })}
+                  <div className="ticket flex justify-between py-2 lg:py-4 lg:px-10 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3">
+                    <div>
+                      <h1>Total ticket : {totalQuantity}</h1>
+                      <h1>Total Price : Rp. {totalPrice}</h1>
                     </div>
-                  );
-                })}
-                <div className="ticket flex justify-between py-2 lg:py-4 lg:px-10 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3">
-                  <div>
-                    <h1>Total ticket : {totalQuantity}</h1>
-                    <h1>Total Price : Rp. {totalPrice}</h1>
+                    {localStorage.getItem("tkn") ||
+                    sessionStorage.getItem("tkn") ? (
+                      <Button
+                        type="submit"
+                        onClick={() => {
+                          const payload = submitTransactionDetails();
+                          console.log("ini payload: ", payload);
+                          console.log("ini event: ", eventData);
+                          const payloadUltimate = {
+                            ticket: payload,
+                            event: eventData,
+                          };
+                          console.log("ini payloadultimate: ", payloadUltimate);
+                          const payloadEventAndTicket = basicGetApi.post(
+                            "/transaction/details",
+                            payload
+                          );
+                          sessionStorage.setItem(
+                            "transaction-data",
+                            JSON.stringify(payloadUltimate)
+                          );
+                          route.push(`/transaction/${eventData.event_id}`);
+                        }}
+                      >
+                        Buy Now
+                      </Button>
+                    ) : (
+                      <Link href={`/sign-in`}>
+                        <Button type="submit">Buy Now</Button>
+                      </Link>
+                    )}
                   </div>
-                  {localStorage.getItem("tkn") ||
-                  sessionStorage.getItem("tkn") ? (
-                    <Button
-                      type="submit"
-                      onClick={() => {
-                        const payload = submitTransactionDetails();
-                        console.log("ini payload: ", payload);
-                        console.log("ini event: ", eventData);
-                        const payloadUltimate = {
-                          ticket: payload,
-                          event: eventData,
-                        };
-                        console.log("ini payloadultimate: ", payloadUltimate);
-                        const payloadEventAndTicket = basicGetApi.post(
-                          "/transaction/details",
-                          payload
-                        );
-                        sessionStorage.setItem(
-                          "transaction-data",
-                          JSON.stringify(payloadUltimate)
-                        );
-                        route.push(`/transaction/${eventData.event_id}`);
-                      }}
-                    >
-                      Buy Now
-                    </Button>
-                  ) : (
-                    <Link href={`/sign-in`}>
-                      <Button type="submit">Buy Now</Button>
-                    </Link>
-                  )}
                 </div>
               </div>
-            </div>
+            )}
+
             <div className="bg-white w-full h-full px-10 md:px-20 lg:px-6 py-5 flex flex-col">
               <h1 className="text-xl font-bold">Organized by</h1>
               <div className="ticket flex gap-2 py-2 my-3 items-center justify-start bg-gray-50 rounded-lg shadow-md px-3">
@@ -400,112 +407,123 @@ const EventDetailPage: React.FC<IEventDetailPage> = ({ params }) => {
           </div>
           <div className="w-full h-full relative ">
             <div className="lg:block hidden sticky top-[10%]">
-              <div className="bg-white w-full h-full px-10 md:px-32 lg:px-4 py-10 flex flex-col sticky top-0">
-                <h1 className="text-2xl font-bold">Ticketss</h1>
-                <div className="ticket-container">
-                  {eventData.ticket_types.map((ticket: any, index: number) => {
-                    return (
-                      <div
-                        key={index}
-                        className="ticket flex justify-between py-2 lg:py-4 lg:px-8 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3"
-                      >
-                        <div>
-                          <h1 className="text-lg font-bold">{ticket.types}</h1>
-                          {ticket.price === 0 ? (
-                            <h2 className="text-md">Price: FREE</h2>
-                          ) : (
-                            <h2 className="text-md">
-                              Price: IDR.{ticket.price}
-                            </h2>
-                          )}
-                          {ticket.quantity_available === 0 ? (
-                            <></>
-                          ) : (
-                            <h2 className="text-sm">
-                              Only {ticket.quantity_available} left.
-                            </h2>
-                          )}
-                        </div>
-                        <div className="flex gap-2 items-center">
-                          {ticket.quantity_available === 0 ? (
-                            <h2 className="text-md font-bold text-red-700">
-                              SOLD
-                            </h2>
-                          ) : (
-                            <>
-                              <h2 className="text-md">Quantity</h2>
-                              <select
-                                className="p-2"
-                                onChange={(e) =>
-                                  updateTicketQuantity(
-                                    index,
-                                    parseInt(e.target.value)
-                                  )
-                                }
-                                value={ticketQuantities[index]}
-                              >
-                                {[...Array(8).keys()].map((num) => (
-                                  <option key={num} value={num}>
-                                    {num}
-                                  </option>
-                                ))}
-                                {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
-                              </select>
-                            </>
-                          )}
+              {isFinished ? (
+                <></>
+              ) : (
+                <div className="bg-white w-full h-full px-10 md:px-32 lg:px-4 py-10 flex flex-col sticky top-0">
+                  <h1 className="text-2xl font-bold">Ticketss</h1>
+                  <div className="ticket-container">
+                    {eventData.ticket_types.map(
+                      (ticket: any, index: number) => {
+                        return (
+                          <div
+                            key={index}
+                            className="ticket flex justify-between py-2 lg:py-4 lg:px-8 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3"
+                          >
+                            <div>
+                              <h1 className="text-lg font-bold">
+                                {ticket.types}
+                              </h1>
+                              {ticket.price === 0 ? (
+                                <h2 className="text-md">Price: FREE</h2>
+                              ) : (
+                                <h2 className="text-md">
+                                  Price: IDR.{ticket.price}
+                                </h2>
+                              )}
+                              {ticket.quantity_available === 0 ? (
+                                <></>
+                              ) : (
+                                <h2 className="text-sm">
+                                  Only {ticket.quantity_available} left.
+                                </h2>
+                              )}
+                            </div>
+                            <div className="flex gap-2 items-center">
+                              {ticket.quantity_available === 0 ? (
+                                <h2 className="text-md font-bold text-red-700">
+                                  SOLD
+                                </h2>
+                              ) : (
+                                <>
+                                  <h2 className="text-md">Quantity</h2>
+                                  <select
+                                    className="p-2"
+                                    onChange={(e) =>
+                                      updateTicketQuantity(
+                                        index,
+                                        parseInt(e.target.value)
+                                      )
+                                    }
+                                    value={ticketQuantities[index]}
+                                  >
+                                    {[...Array(8).keys()].map((num) => (
+                                      <option key={num} value={num}>
+                                        {num}
+                                      </option>
+                                    ))}
+                                    {/* Ticket dibatasi 7, karena mencegah calo. Array(8) index ke 0 */}
+                                  </select>
+                                </>
+                              )}
 
-                          {/* <Button>Buy Ticket</Button> */}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <div className="ticket flex sticky justify-between py-2 lg:py-4 lg:px-8 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3">
-                    <div
-                      className="sticky
-                "
-                    >
-                      <h1 className=" font-bold">
-                        Total ticket : {totalQuantity}
-                      </h1>
-                      <h1 className=" font-bold">
-                        Total Price : Rp. {totalPrice}
-                      </h1>
-                    </div>
-
-                    {localStorage.getItem("tkn") ||
-                    sessionStorage.getItem("tkn") ? (
-                      <Button
-                        type="submit"
-                        onClick={() => {
-                          const payload = submitTransactionDetails();
-                          console.log("ini payload: ", payload);
-                          console.log("ini event: ", eventData);
-                          const payloadUltimate = {
-                            ticket: payload,
-                            event: eventData,
-                          };
-                          console.log("ini payloadultimate: ", payloadUltimate);
-                          const payloadEventAndTicket = basicGetApi.post(
-                            "/transaction/details",
-                            payload
-                          );
-                          sessionStorage.setItem(
-                            "transaction-data",
-                            JSON.stringify(payloadUltimate)
-                          );
-                          route.push(`/transaction/${eventData.event_id}`);
-                        }}
-                      >
-                        Buy Now
-                      </Button>
-                    ) : (
-                      <Link href={`/sign-in`}>
-                        <Button type="submit">Buy Now</Button>
-                      </Link>
+                              {/* <Button>Buy Ticket</Button> */}
+                            </div>
+                          </div>
+                        );
+                      }
                     )}
+                    <div className="ticket flex sticky justify-between py-2 lg:py-4 lg:px-8 my-3 items-center bg-gray-100 rounded-lg shadow-md px-3">
+                      <div
+                        className="sticky
+                "
+                      >
+                        <h1 className=" font-bold">
+                          Total ticket : {totalQuantity}
+                        </h1>
+                        <h1 className=" font-bold">
+                          Total Price : Rp. {totalPrice}
+                        </h1>
+                      </div>
+
+                      {localStorage.getItem("tkn") ||
+                      sessionStorage.getItem("tkn") ? (
+                        <Button
+                          type="submit"
+                          onClick={() => {
+                            const payload = submitTransactionDetails();
+                            console.log("ini payload: ", payload);
+                            console.log("ini event: ", eventData);
+                            const payloadUltimate = {
+                              ticket: payload,
+                              event: eventData,
+                            };
+                            console.log(
+                              "ini payloadultimate: ",
+                              payloadUltimate
+                            );
+                            const payloadEventAndTicket = basicGetApi.post(
+                              "/transaction/details",
+                              payload
+                            );
+                            sessionStorage.setItem(
+                              "transaction-data",
+                              JSON.stringify(payloadUltimate)
+                            );
+                            route.push(`/transaction/${eventData.event_id}`);
+                          }}
+                        >
+                          Buy Now
+                        </Button>
+                      ) : (
+                        <Link href={`/sign-in`}>
+                          <Button type="submit">Buy Now</Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
