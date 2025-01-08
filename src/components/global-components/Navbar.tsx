@@ -23,6 +23,7 @@ export default function Navbar() {
     setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false);
   }, [path]);
 
+  const route = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
@@ -31,9 +32,7 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
-  const user = useAppSelector((state) => state.userReducer);
   const dispatch = useAppDispatch();
-
   const keepLogin = async () => {
     try {
       const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
@@ -42,12 +41,14 @@ export default function Navbar() {
           Authorization: `Bearer ${token}`,
         },
       });
-      dispatch(signIn(response.data.result));
+      dispatch(signIn({ ...response.data.result, isAuth: true }));
       localStorage.setItem('tkn', response.data.result.newToken);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const user = useAppSelector((state) => state.userReducer);
 
   const logOut = () => {
     dispatch(signOut());
@@ -60,13 +61,6 @@ export default function Navbar() {
     keepLogin();
   }, []);
 
-  const city = [
-    { key: 'Jakarta', label: 'Jakarta' },
-    { key: 'Surabaya', label: 'Surabaya' },
-    { key: 'Bandung', label: 'Bandung' },
-    { key: 'Yogyakarta', label: 'Yogyakarta' },
-  ];
-  const route = useRouter();
   const [searchKeyword, setSearchKeyword] = useState('');
   const onHandleSearch = (e: any) => {
     e.preventDefault();

@@ -7,6 +7,7 @@ interface IUser {
   phone?: string;
   role: string;
   isVerified: boolean;
+  isAuth: boolean;
 }
 
 const initalUser: IUser = {
@@ -16,6 +17,7 @@ const initalUser: IUser = {
   isVerified: false,
   phone: '',
   pfp_url: '',
+  isAuth: false,
 };
 
 const userSlice = createSlice({
