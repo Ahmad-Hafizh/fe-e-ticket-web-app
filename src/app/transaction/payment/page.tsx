@@ -16,6 +16,8 @@ const PaymentPage = () => {
   const [totalPrice, setTotalPrice] = useState<any>('');
 
   const route = useRouter();
+
+  const sessionData = JSON.parse(sessionStorage.getItem('transaction-data')!);
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem('transaction-data')!);
     if (data) {
@@ -33,6 +35,7 @@ const PaymentPage = () => {
     }
   }, []);
 
+  const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
   const fileSizeLimit = 10 * 1024 * 1024; //10mb
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem('transaction-data')!);
@@ -59,12 +62,9 @@ const PaymentPage = () => {
   const handleForm = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     formData.append('proofOfPayment', values.proofOfPayment); // file input
-
-    const data = JSON.parse(sessionStorage.getItem('transaction-data')!);
-    formData.append('transactionId', data.transaction.transaction_id); // transactionId
+    formData.append('transactionId', sessionData.transaction.transaction_id); // transactionId
 
     try {
-      const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
       const response = await basicGetApi.post('/transaction/proof', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
