@@ -13,7 +13,10 @@ const confirmationPage = () => {
 
   //ambil data
   const update = async () => {
-    const userData = localStorage.getItem("tkn");
+
+    const userData =
+      localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+
     if (data.coupon) {
       const response = await basicGetApi.patch(
         `/transaction/${transactionId.transaction.transaction_id}`,

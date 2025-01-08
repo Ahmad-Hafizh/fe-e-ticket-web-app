@@ -18,7 +18,8 @@ import { Input } from "@/components/ui/input";
 
 const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<any>("");
+
   const route = useRouter();
 
   const sessionData = JSON.parse(sessionStorage.getItem("transaction-data")!);
@@ -26,17 +27,35 @@ const PaymentPage = () => {
     const data = JSON.parse(sessionStorage.getItem("transaction-data")!);
     if (data) {
       setPaymentMethod(data.transaction.payment_method);
-      setTotalPrice(data.transaction.total);
+
+
+      const formattedRupiah = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+      }).format(data.transaction.total);
+
+      setTotalPrice(formattedRupiah);
+      console.log(totalPrice);
     } else {
       route.push("/");
     }
-  }, []); // Empty dependency array ensures this runs only once after the component mounts
+  }, []);
 
+  const token = localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
   const fileSizeLimit = 10 * 1024 * 1024; //10mb
+  useEffect(() => {
+    const data = JSON.parse(sessionStorage.getItem("transaction-data")!);
+    const totalAmount = data.transaction.total;
+    setTotalPrice(totalAmount);
+  }, []);
+
 
   const formSchema = z.object({
     proofOfPayment: z
       .any()
+
+      .refine((file) => file, { message: "File is required" })
+
       .refine(
         (file) => ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
         { message: "Invalid image file type" }
@@ -56,7 +75,16 @@ const PaymentPage = () => {
     formData.append("transactionId", sessionData.transaction.transaction_id); // transactionId
 
     try {
-      const response = await basicGetApi.post("/transaction/proof", formData);
+
+      const response = await basicGetApi.post("/transaction/proof", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data) {
+        route.push("/transaction/redirect");
+      }
+
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -77,6 +105,9 @@ const PaymentPage = () => {
                   {paymentMethod === "BANK_TRANSFER" ? "Bank Transfer" : ""}{" "}
                   {paymentMethod === "CREDIT_CARD" ? "Credit Card" : ""}
                 </h1>
+
+                <h1 className="font-bold text-2xl">Amount : {totalPrice}</h1>
+
               </CardHeader>
               <CardContent className="flex flex-col gap-8">
                 {paymentMethod === "E_WALLET" ? (
@@ -152,16 +183,6 @@ const PaymentPage = () => {
                   </CardContent>
                 </Card>
               </div>
-              <Button
-                type="submit"
-                onClick={() => {
-                  route.push(
-                    `/transaction/confirm/${sessionData.transaction.transaction_id}`
-                  );
-                }}
-              >
-                Submit Payment
-              </Button>
             </div>
           </div>
         </div>
