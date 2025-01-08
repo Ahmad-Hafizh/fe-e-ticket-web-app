@@ -21,12 +21,12 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com',
       },
       {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
       },
       {
-        protocol: "https",
-        hostname: "robohash.org",
+        protocol: 'https',
+        hostname: 'robohash.org',
       },
     ],
   },

@@ -9,9 +9,8 @@ import React, { useEffect, useState } from 'react';
 
 const TransactionSettingPage = () => {
   const [transactionList, setTransactionList] = useState<any[]>([]);
-  const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
-
   const updateTransaction = async () => {
+    const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
     const response = await basicGetApi.get(`transaction/`, {
       headers: {
         Authorization: `Bearer ${token}`,

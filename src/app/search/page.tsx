@@ -212,7 +212,6 @@ const SearchPage: React.FC = () => {
   return (
     <div className="bg-white w-full h-full px-10 md:px-32 lg:px-48 py-10 flex flex-col gap-10">
       <div>
-        {' '}
         <form onSubmit={setSearch}>
           <Input placeholder="Search event here.." startContent={<IoSearchOutline />} type="text" name="keyword" className="border-none w-full active:border-blue-600" onChange={(e) => handleSearch(e)} />
         </form>
