@@ -1,8 +1,8 @@
-"use client";
-import Link from "next/link";
+'use client';
+import Link from 'next/link';
 // import { useAppSelector } from "@/lib/redux/hooks";
-import { useEffect } from "react";
-import { basicGetApi } from "@/app/config/axios";
+import { useEffect } from 'react';
+import { basicGetApi } from '@/app/config/axios';
 // import { useRouter } from "next/navigation";
 
 const ConfirmationPage = () => {
@@ -11,12 +11,9 @@ const ConfirmationPage = () => {
 
   //ambil data
   const update = async () => {
-    const data = JSON.parse(sessionStorage.getItem("transaction-data")!);
-    const transactionId = JSON.parse(
-      sessionStorage.getItem("transaction-data")!
-    );
-    const userData =
-      localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+    const data = JSON.parse(sessionStorage.getItem('transaction-data')!);
+    const transactionId = JSON.parse(sessionStorage.getItem('transaction-data')!);
+    const userData = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
     if (data.coupon) {
       const response = await basicGetApi.patch(
         `/transaction/${transactionId.transaction.transaction_id}`,
@@ -32,7 +29,7 @@ const ConfirmationPage = () => {
         }
       );
 
-      console.log("ini response: ", response);
+      console.log('ini response: ', response);
     } else {
       const response = await basicGetApi.patch(
         `/transaction/${transactionId.transaction.transaction_id}`,
@@ -48,13 +45,13 @@ const ConfirmationPage = () => {
         }
       );
 
-      console.log("ini response: ", response);
+      console.log('ini response: ', response);
     }
   };
 
   useEffect(() => {
     update();
-    sessionStorage.removeItem("transaction-data");
+    sessionStorage.removeItem('transaction-data');
   }, []);
 
   return (

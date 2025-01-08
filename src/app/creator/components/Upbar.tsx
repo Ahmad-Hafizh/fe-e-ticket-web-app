@@ -2,7 +2,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useAppSelector } from '@/lib/redux/hooks';
@@ -23,8 +23,8 @@ const Upbar = () => {
           <DropdownMenuTrigger className="focus-visible:outline-none">
             <div className="flex justify-center items-center gap-2">
               <Avatar className="w-9 h-9">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user.pfp_url || 'https://github.com/shadcn.png'} />
+                <AvatarFallback>{(user.name[0], user.name[1])}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start gap-0.5">
                 <p className="leading-none">{user.name}</p>
@@ -34,12 +34,9 @@ const Upbar = () => {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" className="w-full">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
+            <DropdownMenuLabel>Setting</DropdownMenuLabel>
+            <DropdownMenuItem>Switch Account</DropdownMenuItem>
+            <DropdownMenuItem>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
