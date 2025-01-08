@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -19,12 +20,15 @@ const EventPage = () => {
   const organizer = useAppSelector((state) => state.organizerReducer);
   const route = useRouter();
 
+
   const [eventList, setEventList] = useState<Event[]>([]);
   const getEventList = async () => {
     try {
+
       const response = await basicGetApi.get(`/search?eo=11&page=1`);
       console.log("ini", response.data.result);
       setEventList(response.data.result.events);
+
     } catch (error) {
       console.log(error);
     }
@@ -62,6 +66,7 @@ const EventPage = () => {
               <SelectItem value="system">Active</SelectItem>
             </SelectContent>
           </Select>
+
           <Button
             variant={"secondary"}
             onClick={() => route.push("event/new-event")}
@@ -69,6 +74,7 @@ const EventPage = () => {
           >
             New Event <LuPlus />
           </Button>
+
         </div>
       </div>
       <div>

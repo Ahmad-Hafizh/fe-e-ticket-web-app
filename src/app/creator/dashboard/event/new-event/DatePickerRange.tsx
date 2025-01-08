@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/popover";
 import { useEffect } from "react";
 
+
 interface IDatePickerWithRange {
   className?: React.HTMLAttributes<HTMLDivElement>;
   field: any;
 }
+
 export function DatePickerWithRange({
   className,
   field,
@@ -54,15 +56,18 @@ export function DatePickerWithRange({
               !date && "text-muted-foreground"
             )}
           >
+
             <CalendarIcon />
             {date?.from ? (
               date.to ? (
                 <>
+
                   {format(date.from, "LLL dd, y")} -{" "}
                   {format(date.to, "LLL dd, y")}
                 </>
               ) : (
                 format(date.from, "LLL dd, y")
+
               )
             ) : (
               <span>Pick a date</span>
@@ -70,6 +75,7 @@ export function DatePickerWithRange({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
+
           <Calendar
             initialFocus
             mode="range"
@@ -78,6 +84,7 @@ export function DatePickerWithRange({
             onSelect={handleDateChange}
             numberOfMonths={2}
           />
+
         </PopoverContent>
       </Popover>
     </div>

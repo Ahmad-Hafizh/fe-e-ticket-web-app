@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [totalPrice, setTotalPrice] = useState<any>("");
+
   const route = useRouter();
 
   const sessionData = JSON.parse(sessionStorage.getItem("transaction-data")!);
@@ -26,6 +27,7 @@ const PaymentPage = () => {
     const data = JSON.parse(sessionStorage.getItem("transaction-data")!);
     if (data) {
       setPaymentMethod(data.transaction.payment_method);
+
 
       const formattedRupiah = new Intl.NumberFormat("id-ID", {
         style: "currency",
@@ -47,10 +49,13 @@ const PaymentPage = () => {
     setTotalPrice(totalAmount);
   }, []);
 
+
   const formSchema = z.object({
     proofOfPayment: z
       .any()
+
       .refine((file) => file, { message: "File is required" })
+
       .refine(
         (file) => ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
         { message: "Invalid image file type" }
@@ -70,6 +75,7 @@ const PaymentPage = () => {
     formData.append("transactionId", sessionData.transaction.transaction_id); // transactionId
 
     try {
+
       const response = await basicGetApi.post("/transaction/proof", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -78,6 +84,7 @@ const PaymentPage = () => {
       if (response.data) {
         route.push("/transaction/redirect");
       }
+
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -98,7 +105,9 @@ const PaymentPage = () => {
                   {paymentMethod === "BANK_TRANSFER" ? "Bank Transfer" : ""}{" "}
                   {paymentMethod === "CREDIT_CARD" ? "Credit Card" : ""}
                 </h1>
+
                 <h1 className="font-bold text-2xl">Amount : {totalPrice}</h1>
+
               </CardHeader>
               <CardContent className="flex flex-col gap-8">
                 {paymentMethod === "E_WALLET" ? (

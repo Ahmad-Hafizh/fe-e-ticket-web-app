@@ -381,12 +381,14 @@ const NewEventPage = () => {
                 </div>
               </div>
               <p>Category</p>
+
               <FormField
                 control={form.control}
                 name="eventCategory"
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
                     <FormControl>
+
                       <div className="flex justify-between">
                         {fixedCategories.map((category: any, index: number) => (
                           <div key={index} className="flex">
@@ -406,12 +408,14 @@ const NewEventPage = () => {
                             />
                           </div>
                         ))}
+
                       </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
             </div>
 
             <div className="flex flex-col gap-4">
@@ -456,6 +460,7 @@ const NewEventPage = () => {
                     <FormItem className="w-full h-[75px]">
                       <FormControl>
                         <Input title="Country" disabled {...field} />
+
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -463,6 +468,7 @@ const NewEventPage = () => {
                 />
                 <FormField
                   control={form.control}
+
                   name="city"
                   render={({ field }) => (
                     <FormItem className="w-full h-[75px]">
@@ -472,12 +478,14 @@ const NewEventPage = () => {
                           placeholder="enter the city"
                           {...field}
                         />
+
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
               <FormField
                 control={form.control}
                 name="zipcode"
@@ -509,6 +517,7 @@ const NewEventPage = () => {
                         placeholder="enter the coupon code"
                         {...field}
                       />
+
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -516,6 +525,7 @@ const NewEventPage = () => {
               />
               <FormField
                 control={form.control}
+
                 name="discount"
                 render={({ field }) => (
                   <FormItem className="w-full h-[75px]">
@@ -543,11 +553,13 @@ const NewEventPage = () => {
                         type="number"
                         {...field}
                       />
+
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="couponStartEndDate"
@@ -560,6 +572,7 @@ const NewEventPage = () => {
                         </label>
                         <DatePickerWithRange field={field} />
                       </div>
+
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -573,6 +586,7 @@ const NewEventPage = () => {
         </Form>
       </div>
       <div className="col-span-2 border p-10 h-fit rounded-xl">
+
         <p className="text-xl font-bold">Ticket</p>
         <div className="flex flex-col gap-2 py-10">
           <Input
@@ -597,6 +611,7 @@ const NewEventPage = () => {
             className="w-full rounded-full"
             onClick={addTicket}
           >
+
             Add Ticket
           </Button>
         </div>

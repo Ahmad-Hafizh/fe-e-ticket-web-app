@@ -100,6 +100,7 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
     }
   }, [transactionDetailData, discount]);
 
+
   let isCouponValid = true;
   // const now = new Date();
   // if (
@@ -156,8 +157,10 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
         transactions: payloadTransaction?.data,
       };
 
+
       const userData =
         localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+
       console.log("payload siap kirim:", payloadUltimate);
       try {
         const send = await basicGetApi.post(
@@ -334,6 +337,7 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                   </div>
                   <div className="flex flex-col py-2 gap-2">
                     {isCouponValid ? (
+
                       <h1 className="text-lg font-bold">Choose your coupon</h1>
                     ) : (
                       <h1 className="text-lg font-bold">No coupon available</h1>
@@ -345,6 +349,7 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                           <div className="flex flex-col">
                             <h1 className="font-bold">
                               Code:{" "}
+
                               {
                                 eventData?.organizer_coupon
                                   ?.organizer_coupon_code
@@ -355,11 +360,14 @@ const TransactionPage: React.FC<ITransactionPage> = ({ params }) => {
                             </h1>
                             <h1 className="text-sm">
                               Only {eventData?.organizer_coupon?.quantity} left
+
                             </h1>
                           </div>
                           <input
                             type="radio"
+
                             value={eventData?.organizer_coupon?.discount}
+
                             onChange={(e) => {
                               setDiscount(parseInt(e.target.value));
                               if (e.target.value) {
