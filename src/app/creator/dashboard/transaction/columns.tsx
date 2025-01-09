@@ -16,15 +16,22 @@ export type Transaction = {
   payment_method: string;
   total_amount: number;
   payment_proof: string | null;
+  eventId: number;
 };
-const acceptTransaction = async (id: number) => {
+const acceptTransaction = async (id: number, event_id: number) => {
   try {
     const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
-    const response = await basicGetApi.patch(`/transaction/${id}`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await basicGetApi.patch(
+      `/transaction/${id}`,
+      {
+        eventId: event_id,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     toast({
       title: response.data.message,
@@ -86,7 +93,6 @@ export const columns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: 'transaction_id',
     header: 'Actions',
     cell: ({ row }) => {
       return (
@@ -101,7 +107,7 @@ export const columns: ColumnDef<Transaction>[] = [
             <DropdownMenuLabel>Detail</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Button type="button" onClick={() => acceptTransaction(row.getValue('transaction_id'))}>
+              <Button type="button" onClick={() => acceptTransaction(row.original.transaction_id, row.original.eventId)}>
                 Accept
               </Button>
             </DropdownMenuItem>
