@@ -5,6 +5,7 @@ import { NextUIProvider } from '@nextui-org/react';
 import Navbar from '@/components/global-components/Navbar';
 import StoreProvider from './StoreProvider';
 import { Toaster } from '@/components/ui/toaster';
+// import { SessionProvider } from 'next-auth/react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

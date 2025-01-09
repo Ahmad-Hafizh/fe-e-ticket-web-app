@@ -225,40 +225,57 @@ export default function Navbar() {
           <div className={`phone-menu transition-all duration-300 ease-in-out ese ${isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
             {isOpen && (
               <div className="menuphone my-3 flex flex-col py-2 lg:hidden h-screen">
-                <div className="flex gap-4 items-center py-5">
-                  <Avatar isBordered as="button" className="transition-transform h-10 w-10" color="secondary" name="Jason Hughes" size="sm" src={`${user?.pfp_url}`} />
-                  <div className="flex flex-col">
-                    <h1 className="text-sm font-bold">Hello {user.name}!</h1>
-                    <h1 className="text-xs">{user.email}</h1>
+                {user.name ? (
+                  <div className="flex flex-col gap-4 items-start py-5">
+                    <div className="flex justify-between gap-3">
+                      <Avatar isBordered as="button" className="transition-transform h-10 w-10" color="secondary" name="Jason Hughes" size="sm" src={`${user?.pfp_url}`} />
+                      <div className="flex flex-col">
+                        <h1 className="text-sm font-bold">Hello {user.name}!</h1>
+                        <h1 className="text-xs">{user.email}</h1>
+                      </div>
+                    </div>
+                    <li className="my-2 list-none">
+                      <Link href="/creator/dashboard" onClick={closeNavbar} className="font-semibold">
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li className="my-2 list-none">
+                      <Link
+                        href="/search"
+                        onClick={() => {
+                          route.push(`/search`);
+                        }}
+                        className="font-semibold"
+                      >
+                        Explore
+                      </Link>
+                    </li>
+                    <li className="my-2 list-none">
+                      <Link href="/setting/profile" onClick={closeNavbar} className="font-semibold">
+                        Setting
+                      </Link>
+                    </li>
+                    <li className="my-2 list-none">
+                      <Link href="#" onClick={logOut} className="font-semibold">
+                        Log Out
+                      </Link>
+                    </li>
                   </div>
-                </div>
-
-                <li className="my-2 list-none">
-                  <Link href="/#service" onClick={closeNavbar} className="font-semibold">
-                    Dashboard
-                  </Link>
-                </li>
-                <li className="my-2 list-none">
-                  <Link
-                    href="/page/about-us/"
-                    onClick={() => {
-                      route.push(`/search`);
-                    }}
-                    className="font-semibold"
-                  >
-                    Explore
-                  </Link>
-                </li>
-                <li className="my-2 list-none">
-                  <Link href="/#pricing-phone" onClick={closeNavbar} className="font-semibold">
-                    Setting
-                  </Link>
-                </li>
-                <li className="my-2 list-none">
-                  <Link href="/page/resource/" onClick={closeNavbar} className="font-semibold">
-                    Log Out
-                  </Link>
-                </li>
+                ) : (
+                  <div className="flex gap-4 items-center py-5">
+                    <li className="my-2 list-none">
+                      <Link
+                        href="/page/about-us/"
+                        onClick={() => {
+                          route.push(`/search`);
+                        }}
+                        className="font-semibold"
+                      >
+                        Explore
+                      </Link>
+                    </li>
+                  </div>
+                )}
               </div>
             )}
           </div>
