@@ -1,21 +1,39 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { IoMdTime } from 'react-icons/io';
-import { MdDateRange } from 'react-icons/md';
-import { IoLocationOutline } from 'react-icons/io5';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { basicGetApi } from '@/app/config/axios';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useAppSelector } from '@/lib/redux/hooks';
+"use client";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { IoMdTime } from "react-icons/io";
+import { MdDateRange } from "react-icons/md";
+import { IoLocationOutline } from "react-icons/io5";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { basicGetApi } from "@/app/config/axios";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { headers } from "next/headers";
 
 // interface ITransactionPage {
 //   params: { slug: string };
@@ -31,6 +49,8 @@ const TransactionPage: React.FC = () => {
   const [discount, setDiscount] = useState<any>(0);
   const [error, setError] = useState<any | null>(null);
   const [coupon, setCoupon] = useState<boolean>(false);
+  const [userCoupon, setUserCoupon] = useState<any>(0);
+  const [userPoint, setUserPoint] = useState<any>(0);
 
   const user = useAppSelector((state) => state.userReducer);
 
@@ -40,27 +60,64 @@ const TransactionPage: React.FC = () => {
   // console.log("ini user:", user);
 
   useEffect(() => {
+    getPoint();
+  }, [finalPrice]);
+
+  const getPoint = async () => {
+    const userToken =
+      localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+    const response = await basicGetApi.post(
+      "/users/get-point-by-price",
+      {
+        transactionAmount: finalPrice,
+      },
+      { headers: { Authorization: `Bearer ${userToken}` } }
+    );
+    const data = response.data;
+    console.log("ini get point by price:", response);
+  };
+
+  useEffect(() => {
     const getData = async () => {
       try {
         setLoading(true);
-        const transactionData = sessionStorage.getItem('transaction-data') ? JSON.parse(sessionStorage.getItem('transaction-data')!) : null;
+        const transactionData = sessionStorage.getItem("transaction-data")
+          ? JSON.parse(sessionStorage.getItem("transaction-data")!)
+          : null;
         if (!transactionData) {
-          route.push('/');
+          route.push("/");
         }
         setEventData(transactionData.event);
         setTransactionDetailData(transactionData.ticket.data);
-        console.log('Ini transactionData: ', transactionData.ticket.data);
-        console.log('Ini transactionDetailData: ', transactionDetailData);
+        console.log("Ini transactionData: ", transactionData.ticket.data);
+        console.log("Ini transactionDetailData: ", transactionDetailData);
         setLoading(false);
+
+        const userToken =
+          localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
+        const getUserCoupon = await basicGetApi.get("/users/coupon", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        setUserCoupon(getUserCoupon.data.result[0]);
+        console.log("Ini user coupon,", getUserCoupon.data.result[0]);
+        const getUserPoint = await basicGetApi.get("/users/point", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        setUserPoint(getUserPoint.data.result[0]);
+        console.log("Ini user point,", getUserPoint.data);
       } catch (error) {
         setError(error);
       }
     };
-    console.log('getting data');
+    console.log("getting data");
     getData();
   }, []);
 
-  console.log('ini event data:', eventData);
+  console.log("ini event data:", eventData);
   //tambah kondisi untuk menyertakan pakai kupon apa enggak?
   useEffect(() => {
     if (transactionDetailData) {
@@ -82,30 +139,29 @@ const TransactionPage: React.FC = () => {
     }
   }, [transactionDetailData, discount]);
 
-  const isCouponValid = true;
-  // const now = new Date();
-  // if (
-  //   eventData?.organizer_coupon?.quantity > 0 &&
-  //   new Date(eventData.organizer_coupon?.start_date) <= now &&
-  //   new Date(eventData.organizer_coupon?.expired_date) > now
-  // ) {
-  //   isCouponValid = true;
-  // }
+  let isCouponValid = true;
+  const now = new Date();
+  if (
+    eventData?.organizer_coupon?.quantity > 0 &&
+    new Date(eventData.organizer_coupon?.expired_date) > now
+  ) {
+    isCouponValid = true;
+  }
 
   //form validation
   const formSchema = z.object({
     coupon: z.string().optional(),
-    payment: z.enum(['BANK_TRANSFER', 'E_WALLET', 'CREDIT_CARD']),
+    payment: z.enum(["BANK_TRANSFER", "E_WALLET", "CREDIT_CARD"]),
     terms: z.boolean().refine((val) => val === true, {
-      message: 'You must agree to the terms and conditions.',
+      message: "You must agree to the terms and conditions.",
     }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      coupon: '',
-      payment: 'BANK_TRANSFER',
+      coupon: "",
+      payment: "BANK_TRANSFER",
       terms: true,
     },
   });
@@ -115,7 +171,9 @@ const TransactionPage: React.FC = () => {
     let transactionDetailsIds;
     if (transactionDetailData && transactionDetailData.length > 0) {
       // Extract transaction_details_id from each item
-      transactionDetailsIds = transactionDetailData.map((value: any) => value.transaction_details_id);
+      transactionDetailsIds = transactionDetailData.map(
+        (value: any) => value.transaction_details_id
+      );
 
       const payloadTransaction = {
         data: {
@@ -127,16 +185,19 @@ const TransactionPage: React.FC = () => {
         },
       };
 
-      const transactionData = sessionStorage.getItem('transaction-data') ? JSON.parse(sessionStorage.getItem('transaction-data')!) : null;
+      const transactionData = sessionStorage.getItem("transaction-data")
+        ? JSON.parse(sessionStorage.getItem("transaction-data")!)
+        : null;
 
       const payloadUltimate = {
         ...transactionData,
         transactions: payloadTransaction?.data,
       };
 
-      const userData = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
+      const userData =
+        localStorage.getItem("tkn") || sessionStorage.getItem("tkn");
 
-      console.log('payload siap kirim:', payloadUltimate);
+      console.log("payload siap kirim:", payloadUltimate);
       try {
         const send = await basicGetApi.post(
           `/transaction/${payloadUltimate.event.event_id}`,
@@ -149,7 +210,7 @@ const TransactionPage: React.FC = () => {
             },
           }
         );
-        console.log('Ini send:', send);
+        console.log("Ini send:", send);
         transactionData.transaction = {
           transaction_id: send.data.result.transaction_id,
           payment_method: values.payment,
@@ -158,11 +219,14 @@ const TransactionPage: React.FC = () => {
         if (coupon) {
           transactionData.coupon = true;
         }
-        sessionStorage.setItem('transaction-data', JSON.stringify(transactionData));
+        sessionStorage.setItem(
+          "transaction-data",
+          JSON.stringify(transactionData)
+        );
         // route.push(`/transaction/confirm/${send.data.result.transaction_id}`);
         route.push(`/transaction/payment`);
       } catch (error) {
-        console.log('Ini error', error);
+        console.log("Ini error", error);
       }
     }
   }
@@ -189,24 +253,30 @@ const TransactionPage: React.FC = () => {
                     <h1 className="font-bold text-2xl">{eventData.title}</h1>
                     <div className="flex-col flex text-md md:text-xl justify-center gap-2">
                       <h1 className="flex gap-3 items-center">
-                        {' '}
+                        {" "}
                         <IoLocationOutline />
-                        {eventData.event_location.address_name} {eventData.event_location.address}
+                        {eventData.event_location.address_name}{" "}
+                        {eventData.event_location.address}
                       </h1>
                       <h1 className="flex gap-3 items-center">
-                        {' '}
+                        {" "}
                         <IoMdTime />
-                        {eventData.startTime} - {eventData.endTime} {eventData.timezone}
+                        {eventData.startTime} - {eventData.endTime}{" "}
+                        {eventData.timezone}
                       </h1>
                       {eventData.endDate ? (
                         <h1 className="flex gap-3 items-center">
-                          {' '}
-                          <MdDateRange /> {eventData.startDate.slice(0, 10)} - {eventData.endDate.slice(0, 10)}
+                          {" "}
+                          <MdDateRange /> {eventData.startDate.slice(
+                            0,
+                            10
+                          )} - {eventData.endDate.slice(0, 10)}
                         </h1>
                       ) : (
                         <h1 className="flex gap-3 items-center">
-                          {' '}
-                          <MdDateRange /> {eventData.startDate} {eventData.timezone}
+                          {" "}
+                          <MdDateRange /> {eventData.startDate}{" "}
+                          {eventData.timezone}
                         </h1>
                       )}
                     </div>
@@ -228,15 +298,26 @@ const TransactionPage: React.FC = () => {
                     </div>
                     <div className="ticket w-full grid grid-cols-3 text-base py-2 lg:px-10">
                       {transactionDetailData.length > 0 ? (
-                        transactionDetailData.map((value: any, index: number) => {
-                          return (
-                            <div className="w-full col-span-3 grid grid-cols-3 py-2" key={index}>
-                              <h1 className="flex items-center justify-start col-span-">{value?.types}</h1>
-                              <h1 className="flex items-center justify-center col-span-">{value?.quantityBought}</h1>
-                              <h1 className="flex items-center justify-end col-span-">{value?.price}</h1>
-                            </div>
-                          );
-                        })
+                        transactionDetailData.map(
+                          (value: any, index: number) => {
+                            return (
+                              <div
+                                className="w-full col-span-3 grid grid-cols-3 py-2"
+                                key={index}
+                              >
+                                <h1 className="flex items-center justify-start col-span-">
+                                  {value?.types}
+                                </h1>
+                                <h1 className="flex items-center justify-center col-span-">
+                                  {value?.quantityBought}
+                                </h1>
+                                <h1 className="flex items-center justify-end col-span-">
+                                  {value?.price}
+                                </h1>
+                              </div>
+                            );
+                          }
+                        )
                       ) : (
                         <div>No transaction details available</div>
                       )}
@@ -265,7 +346,10 @@ const TransactionPage: React.FC = () => {
         </div>
         <div className="w-full h-full relative px-5 lg:px-0 py-8 lg:py-0">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
               <Card className="p-3">
                 <CardHeader>
                   <h1 className="text-xl font-bold">Summary</h1>
@@ -277,30 +361,111 @@ const TransactionPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <h1>Platform Fee</h1>
-                    <h1>Rp. {finalPrice === 0 ? '0' : 50}</h1>
+                    <h1>Rp. {finalPrice === 0 ? "0" : 50}</h1>
                   </div>
                   <div className="flex justify-between">
                     <h1>Discount Coupon</h1>
                     <h1>Rp. {discount}</h1>
                   </div>
+                  {userPoint ? (
+                    <div className="flex justify-between  font-bold py-2 text-lg">
+                      <h1>Point Discount</h1>
+                      <h1>Rp. {userPoint}</h1>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                   <div className="flex justify-between  font-bold py-2 text-lg">
                     <h1>Total Price</h1>
                     <h1>Rp. {finalPrice}</h1>
                   </div>
                   <div className="flex flex-col py-2 gap-2">
-                    {isCouponValid ? <h1 className="text-lg font-bold">Choose your coupon</h1> : <h1 className="text-lg font-bold">No coupon available</h1>}
+                    {isCouponValid ? (
+                      <h1 className="text-lg font-bold">Choose your coupon</h1>
+                    ) : (
+                      <h1 className="text-lg font-bold">No coupon available</h1>
+                    )}
 
-                    <div className="flex gap-3 justify-between items-center h-full ">
+                    <div className="flex flex-col gap-3 justify-between items-center h-full ">
                       {isCouponValid && (
                         <Card className="w-full h-fit px-5 py-3 flex justify-between items-center">
                           <div className="flex flex-col">
-                            <h1 className="font-bold">Code: {eventData?.organizer_coupon?.organizer_coupon_code}</h1>
-                            <h1 className="text-sm">Disc: Rp.{eventData?.organizer_coupon?.discount}</h1>
-                            <h1 className="text-sm">Only {eventData?.organizer_coupon?.quantity} left</h1>
+                            <h1 className="font-bold">
+                              Discount Code:{" "}
+                              {
+                                eventData?.organizer_coupon
+                                  ?.organizer_coupon_code
+                              }
+                            </h1>
+                            <h1 className="text-sm">
+                              Disc: Rp.{eventData?.organizer_coupon?.discount}
+                            </h1>
+                            <h1 className="text-sm">
+                              Only {eventData?.organizer_coupon?.quantity} left
+                            </h1>
                           </div>
                           <input
                             type="radio"
+                            name="coupon"
                             value={eventData?.organizer_coupon?.discount}
+                            onChange={(e) => {
+                              setDiscount(parseInt(e.target.value));
+                              if (e.target.value) {
+                                setCoupon(true);
+                              } else {
+                                setCoupon(false);
+                              }
+                            }}
+                          />
+                        </Card>
+                      )}
+                      {userCoupon ? (
+                        <Card className="w-full h-fit px-5 py-3 flex justify-between items-center">
+                          <div className="flex flex-col">
+                            <h1 className="font-bold">
+                              Refferal Code: {userCoupon?.coupon_code}
+                            </h1>
+                            <h1 className="text-sm">
+                              Disc: Rp.{userCoupon?.discount}
+                            </h1>
+                            <h1 className="text-sm">Only 1 coupon</h1>
+                          </div>
+                          <input
+                            type="radio"
+                            name="coupon"
+                            value={userCoupon?.discount}
+                            onChange={(e) => {
+                              setDiscount(parseInt(e.target.value));
+                              if (e.target.value) {
+                                setCoupon(true);
+                              } else {
+                                setCoupon(false);
+                              }
+                            }}
+                          />
+                        </Card>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+
+                    {userPoint ? (
+                      <h1 className="text-lg font-bold">Your Point</h1>
+                    ) : (
+                      <h1 className="text-lg font-bold mt-3">
+                        No Point available
+                      </h1>
+                    )}
+                    <div className="flex flex-col gap-3 justify-between items-center h-full ">
+                      {userPoint && (
+                        <Card className="w-full h-fit px-5 py-3 flex justify-between items-center">
+                          <div className="flex flex-col">
+                            <h1 className="font-bold">Use Point</h1>
+                          </div>
+                          <input
+                            type="checkbox"
+                            name="point"
+                            value={userPoint?.discount}
                             onChange={(e) => {
                               setDiscount(parseInt(e.target.value));
                               if (e.target.value) {
@@ -325,24 +490,34 @@ const TransactionPage: React.FC = () => {
                             render={({ field }) => (
                               <FormItem className="space-y-3">
                                 <FormControl>
-                                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                                  <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex flex-col space-y-1"
+                                  >
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                       <FormControl>
                                         <RadioGroupItem value="CREDIT_CARD" />
                                       </FormControl>
-                                      <FormLabel className="font-normal">Credit Card</FormLabel>
+                                      <FormLabel className="font-normal">
+                                        Credit Card
+                                      </FormLabel>
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                       <FormControl>
                                         <RadioGroupItem value="BANK_TRANSFER" />
                                       </FormControl>
-                                      <FormLabel className="font-normal">Bank Transfer</FormLabel>
+                                      <FormLabel className="font-normal">
+                                        Bank Transfer
+                                      </FormLabel>
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                       <FormControl>
                                         <RadioGroupItem value="E_WALLET" />
                                       </FormControl>
-                                      <FormLabel className="font-normal">E-Wallet</FormLabel>
+                                      <FormLabel className="font-normal">
+                                        E-Wallet
+                                      </FormLabel>
                                     </FormItem>
                                   </RadioGroup>
                                 </FormControl>
@@ -357,7 +532,8 @@ const TransactionPage: React.FC = () => {
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
                   <div className="flex gap-2 justify-start items-center w-full">
-                    <input type="checkbox" id="terms" value="" /> <h1>I agree to terms and condition</h1>
+                    <input type="checkbox" id="terms" value="" />{" "}
+                    <h1>I agree to terms and condition</h1>
                   </div>
                   <div className="w-full">
                     <Button className="w-full h-full">Buy now</Button>
