@@ -13,6 +13,7 @@ interface ITrans {
   total_amount: number;
   transaction_id: number;
   payment_proof: string | null;
+  eventId: number;
 }
 
 const TransactionEOPage = () => {
@@ -22,12 +23,15 @@ const TransactionEOPage = () => {
     try {
       const token = localStorage.getItem('tkn') || sessionStorage.getItem('tkn');
       const response = await basicGetApi.get('/transaction/organizer', { headers: { Authorization: `Bearer ${token}` } });
+      console.log(response.data.result);
+
       const dataTable: any[] = response.data.result;
       const transformedData = dataTable.map((e: any) => {
         return {
           transaction_id: e.transaction_id,
           date: e.createdAt,
           event: e.transaction_details[0].event.title,
+          eventId: e.transaction_details[0].event_id,
           isPaid: e.isPaid,
           payment_method: e.payment_method,
           total_amount: e.total_amount,
