@@ -66,7 +66,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="none" className="py-4 pl-4 border-r-2 h-screen w-full">
       <SidebarHeader>
-        <p className="text-3xl font-bold">LOGO</p>
+        <p className="text-3xl font-bold">eticket</p>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/global-components/CustomInput';
 import { basicGetApi } from '../config/axios';
+import Link from 'next/link';
 
 const formSchema = z.object({
   name: z.string().min(4, { message: 'Must be more than 4 or more characters long' }).max(100, { message: 'Must be less than 100 characters long' }),
@@ -125,6 +126,12 @@ const Register = ({ onNext, onSetData, currentData, onSetUserData }: IRegister) 
             <Button type="submit" className="!mt-2 w-full rounded-full">
               Continue
             </Button>
+            <p className="mt-2 ml-5 text-gray-600">
+              Already have an account?
+              <Link href="/sign-up" className="hover:text-black">
+                Sign in
+              </Link>
+            </p>
           </form>
         </Form>
       </div>

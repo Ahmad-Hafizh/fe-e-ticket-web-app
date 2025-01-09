@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { signIn } from '@/lib/redux/reducers/userSlice';
 import { Checkbox } from '@/components/ui/checkbox';
+import Link from 'next/link';
+import cookies from 'js-cookie';
 
 const formSchema = z.object({
   email: z.string().min(4, { message: 'Email must be more than 4 characters' }).max(100, { message: 'Email must be less than 100 characters' }).email({ message: 'email is invalid' }),
@@ -33,12 +35,20 @@ const SignInPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      cookies.remove('org');
+      cookies.remove('tkn');
+      localStorage.removeItem('tkn');
+      sessionStorage.removeItem('tkn');
       const response = await basicGetApi.post('/users/signin', {
         email: values.email,
         password: values.password,
       });
 
       dispatch(signIn({ ...response.data.result, isAuth: true }));
+      document.cookie = `tkn=${response.data.result.token}; path=/;`;
+      if (response.data.result.role === 'organizer') {
+        document.cookie = `org=${response.data.result.token}r2org; path=/;`;
+      }
       if (remember) {
         localStorage.setItem('tkn', response.data.result.token);
       } else {
@@ -104,6 +114,18 @@ const SignInPage = () => {
             <Button type="submit" className="w-full rounded-full">
               Sign in
             </Button>
+            <div className="flex mt-2 flex-col">
+              <Link href="/forgot-password" className=" ml-5 text-gray-600">
+                Forgot Password
+              </Link>
+              <p className="ml-5 text-gray-600">
+                Dont have an account?
+                <Link href="/sign-up" className="hover:text-black">
+                  {' '}
+                  create user
+                </Link>
+              </p>
+            </div>
           </form>
         </Form>
       </div>

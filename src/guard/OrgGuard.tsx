@@ -7,11 +7,11 @@ interface IAuthGuardProps {
   children: ReactNode;
 }
 
-export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
+export const OrgAuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
   const user = useAppSelector((state) => state.userReducer);
   useEffect(() => {
     if (Object.hasOwn(user, 'isAuth')) {
-      if (user.role === 'user') {
+      if (!user?.isAuth && user.role === 'user') {
         redirect('/');
       }
     }

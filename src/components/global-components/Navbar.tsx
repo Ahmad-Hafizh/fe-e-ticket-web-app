@@ -13,15 +13,36 @@ import Link from 'next/link';
 import { Input, Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Avatar } from '@nextui-org/react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { useRouter } from 'next/navigation';
+import cookies from 'js-cookie';
 
 export default function Navbar() {
   const path: string = usePathname();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hide, setHide] = useState<boolean>(
-    path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false
+    path === '/sign-up' ||
+      path === '/sign-in' ||
+      path === '/unauthorized' ||
+      path === '/unauthenticated' ||
+      path === '/forgot-password' ||
+      path.startsWith('/recover-password') ||
+      path.startsWith('/verify-email') ||
+      path.startsWith('/creator')
+      ? true
+      : false
   );
   useEffect(() => {
-    setHide(path === '/sign-up' || path === '/sign-in' || path === '/forgot-password' || path.startsWith('/recover-password') || path.startsWith('/verify-email') || path.startsWith('/creator') ? true : false);
+    setHide(
+      path === '/sign-up' ||
+        path === '/sign-in' ||
+        path === '/unauthorized' ||
+        path === '/unauthenticated' ||
+        path === '/forgot-password' ||
+        path.startsWith('/recover-password') ||
+        path.startsWith('/verify-email') ||
+        path.startsWith('/creator')
+        ? true
+        : false
+    );
   }, [path]);
 
   const route = useRouter();
@@ -42,6 +63,11 @@ export default function Navbar() {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      document.cookie = `tkn=${response.data.result.token}; path=/;`;
+      if (response.data.result.role === 'organizer') {
+        document.cookie = `org=${response.data.result.token}r2org; path=/;`;
+      }
       dispatch(signIn({ ...response.data.result, isAuth: true }));
       localStorage.setItem('tkn', response.data.result.newToken);
     } catch (error) {
@@ -53,6 +79,8 @@ export default function Navbar() {
 
   const logOut = () => {
     dispatch(signOut());
+    cookies.remove('tkn');
+    cookies.remove('org');
     localStorage.removeItem('tkn');
     sessionStorage.removeItem('tkn');
     route.refresh();

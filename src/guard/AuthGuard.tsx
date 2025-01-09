@@ -10,8 +10,10 @@ interface IAuthGuardProps {
 export const AuthGuard: React.FC<IAuthGuardProps> = ({ children }) => {
   const user = useAppSelector((state) => state.userReducer);
   useEffect(() => {
-    if (!user?.isAuth) {
-      redirect('/sign-in');
+    if (Object.hasOwn(user, 'isAuth')) {
+      if (!user?.isAuth) {
+        redirect('/');
+      }
     }
   }, [user]);
   return <>{children}</>;
